@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-azure-mgmt-monitor
+_pkgname=azure-mgmt-monitor
+pkgver=0.10.0
+pkgrel=1
+pkgdesc='Microsoft Azure Monitor Client Library for Python.'
+arch=('any')
+url='https://pypi.org/project/azure-mgmt-monitor/#files'
+license=('MIT')
+depends=('python')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/7e/ed/5729d203f28d224b97baf8be81615e38ab723b5bf104b034d711145554fc/$_pkgname-$pkgver.zip")
+sha512sums=('512067915f104f3897813f6e1a83cb3dbec2573856c3ce700237e942e0424f3ccf3defc0dc88884be714917ec7bb5ebcd6e90ee300c3a1d050dd203ac5ac59d5')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

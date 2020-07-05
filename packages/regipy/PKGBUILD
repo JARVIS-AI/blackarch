@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=regipy
+pkgver=1.5.7
+pkgrel=1
+pkgdesc='Library for parsing offline registry hives.'
+groups=('blackarch' 'blackarch-forensic')
+arch=('any')
+url='https://github.com/mkorman90/regipy'
+license=('MIT')
+depends=('python' 'python-construct' 'python-attrs' 'python-click' 'python-tqdm'
+         'python-inflection' 'python-jsonlines' 'python-pytz' 'python-logbook'
+         'python-tabulate')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/04/b6/d2bb00eaf2dda7c0982c3803587eb6c98f0f14622519820ab26c2197fb43/$pkgname-$pkgver.tar.gz")
+sha512sums=('55ea465aaecba69e32ffd1187f3ee277b723fae6664865b48c489f0ea8f5d804071805ba8e6f53ba7a79b54892fc3480ad0503085f5447e497f6e41fa016b044')
+
+prepare() {
+  cd "$pkgname-$pkgver"
+
+  #sed "s|==[0-9].*|\',|g" -i setup.py
+  #sed "31!s|jsonlines',|jsonlines'\],|" -i setup.py
+}
+
+build() {
+  cd "$pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

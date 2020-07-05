@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-adal
+pkgname=('python2-adal' 'python-adal')
+_pkgname=adal
+pkgver=1.2.4
+pkgrel=1
+pkgdesc='The ADAL for Python library makes it easy for python application to authenticate to Azure Active Directory (AAD) in order to access AAD protected web resources.'
+arch=('any')
+url='https://pypi.org/project/adal/#files'
+license=('MIT')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/6d/7b/2556101af58c147d19f77f6b064248fff43fc6d8c34126ef04961ab821d9/$_pkgname-$pkgver.tar.gz")
+sha512sums=('c993ffcf62e178bb022d72fc11b733de5d4b18f7da4ff26da98f860cdb7d266a614443586848695ad74ce690c799ea9506625c8a8d6482b1630034b016dcf35e')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-adal() {
+  depends=('python2' 'python2-pyjwt')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+
+package_python-adal() {
+  depends=('python' 'python-pyjwt')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

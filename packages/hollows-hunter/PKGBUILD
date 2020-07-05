@@ -1,0 +1,26 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=hollows-hunter
+pkgver=0.2.6
+pkgrel=1
+pkgdesc='Scans all running processes. Recognizes and dumps a variety of potentially malicious implants (replaced/injected PEs, shellcodes, hooks, in-memory patches).'
+url='https://github.com/hasherezade/hollows_hunter'
+groups=('blackarch' 'blackarch-windows' 'blackarch-malware'
+        'blackarch-binary')
+license=('BSD')
+arch=('any')
+makedepends=('unzip')
+source=("https://github.com/hasherezade/${pkgname//-/_}/releases/download/v$pkgver/${pkgname//-/_}64.zip"
+        "https://github.com/hasherezade/${pkgname//-/_}/releases/download/v$pkgver/${pkgname//-/_}32.zip")
+sha512sums=('c349c57628a3f262a484087ebe5d5739b46b6af7eac61295cf7d61053d999c1185f3fa7cd2b5e4db32ab8e4e4791cd5a6086c839ab944d15e867c248b25b4c18'
+            '7b0d1282593145a0758ec5ae601f20531f6fd50ed8ef36a0fcc762f187d18bdd128f9d876eec425a9d12519d58f2f0f6a73eaf72fabf19c6eb96c6b664f46df1')
+noextract=("${pkgname//-/_}64.zip" "${pkgname//-/_}32.zip")
+
+package() {
+  install -dm 755 "$pkgdir/usr/share/windows/$pkgname/"{64,32}
+
+  unzip -qq "${pkgname//-/_}64.zip" -d "$pkgdir/usr/share/windows/$pkgname/64/"
+  unzip -qq "${pkgname//-/_}32.zip" -d "$pkgdir/usr/share/windows/$pkgname/32/"
+}
+

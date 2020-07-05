@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-pyvex
+_pkgname=pyvex
+pkgver=8.20.6.8
+pkgrel=1
+pkgdesc='A Python interface to libVEX and VEX IR.'
+arch=('x86_64' 'aarch64')
+url='https://pypi.org/project/pyvex/#files'
+license=('BSD')
+depends=('python' 'python-pycparser' 'python-cffi' 'python-archinfo'
+         'python-bitstring' 'python-future' 'python-requests')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/9d/fb/f06f82d384cb717c57e3b5cda72d2a3c614d161ae05e01f74aeb322d212b/$_pkgname-$pkgver.tar.gz")
+sha512sums=('a4bd0202d1ea1a28210ebf8220a670c7e05538f78fc78de38c265e2b64f9551118ad7def63a7f21c6334158c3155b1f9c8db7780eed471de9c8a09798f148089')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

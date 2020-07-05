@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-enaml
+_pkgname=enaml
+pkgver=0.11.2
+pkgrel=1
+pkgdesc='Declarative DSL for building rich user interfaces in Python.'
+arch=('x86_64' 'aarch64')
+url='https://pypi.org/project/enaml/#files'
+license=('BSD')
+depends=('python' 'python-ply' 'python-kiwisolver' 'python-atom'
+         'python-qtpy')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/fa/cc/f1657bfa4b4581a28a8cee734ed5cecd3805ff98169bf0ab30547204950c/$_pkgname-$pkgver.tar.gz")
+sha512sums=('66930eadead63bd7c5d3d67e3e004a072d7151a1cc384d460b6fba18e205ba44e04c8ecc69d7d8b5ed3c1f571ce2de25311304da499ae9dfd0575f892bf1e9ef')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python-enaml() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" -O1 --skip-build
+}
+

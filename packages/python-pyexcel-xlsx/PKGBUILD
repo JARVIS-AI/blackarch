@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-pyexcel-xlsx
+_pkgname=pyexcel-xlsx
+pkgver=0.5.8
+pkgrel=1
+pkgdesc='A wrapper library to read, manipulate and write data in xlsx and xlsmformat.'
+arch=('any')
+url='https://pypi.org/project/pyexcel-xlsx/#files'
+license=('BSD')
+depends=('python' 'python-pyexcel-io' 'python-openpyxl')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/26/cf/2fb615663d24bb3185b4f1a74af0346bcfe0469305a3a3c3b5b5edb60304/$_pkgname-$pkgver.tar.gz")
+sha512sums=('76d58bcf5a4de00c71171d9d6d904f2d7a0c6fae48cceeb955292c8e4831c348e59ccf83e7da38bdff1152599e7a64fb4f33f0d00731f0d2d97c0d987c19fd05')
+
+prepare(){
+  cd "$_pkgname-$pkgver"
+
+  sed -i 's/openpyxl>=2.5.0,<2.6.0/openpyxl/g' setup.py
+  sed -i 's/pyexcel-io>=0.5.3/pyexcel-io/g' setup.py
+}
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

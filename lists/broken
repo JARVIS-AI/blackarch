@@ -1,0 +1,23 @@
+aimage # see issue #2759
+amoco # see issue #2759
+autopwn # see issue #2759
+climber
+eapeak
+grr
+host-extract
+inquisitor
+lte-cell-scanner # upstream, devs are not maintaining any more from 2012, need to write patch
+manticore
+massexpconsole
+operative
+pcileech # upstream, waiting for fixing issue
+praeda
+preeny # upstream, waiting for fixing issue
+r2-bindings
+reverseip
+revsh
+sh00t
+shellinabox # upstream, waiting for fixing issue
+sloth-fuzzer # upstream, devs are not maintaining since 2016, need to write patch
+verinice
+yawast

@@ -1,0 +1,52 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-pyghmi
+pkgname=('python2-pyghmi' 'python-pyghmi')
+_pkgname=pyghmi
+pkgver=1.5.15
+pkgrel=1
+pkgdesc='Python General Hardware Management Initiative (IPMI and others).'
+arch=('any')
+url='https://pypi.org/project/pyghmi/#files'
+license=('Apache')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/2d/f7/d49df908ec80e1eee12ddc2390fc6f1f2db678495ece8799e8aea934bed8/$_pkgname-$pkgver.tar.gz")
+sha512sums=('009af500113c88749c7a20f0ebaa8f21badcb8636706cb96a3818c8c9ed6418c6f80769cf14dde06046baad4b2590f9c3e5210f081357a2fbc952a1d0d9822df')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-pyghmi() {
+  depends=('python2' 'python2-pbr')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+
+  for i in "$pkgdir/usr/bin/"* ; do
+    mv "$i" "${i}2"
+  done
+}
+
+package_python-pyghmi() {
+  depends=('python' 'python-pbr')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

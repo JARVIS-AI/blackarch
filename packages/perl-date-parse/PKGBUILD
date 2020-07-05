@@ -1,8 +1,9 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='perl-date-parse'
-pkgver='2.30'
+pkgname=perl-date-parse
+_pkgname=TimeDate
+pkgver=2.32
 pkgrel=2
 pkgdesc='Parse date strings into time values.'
 arch=('any')
@@ -10,11 +11,11 @@ url='http://search.cpan.org/~gbarr/TimeDate-2.30/'
 license=('GPL' 'PerlArtistic')
 depends=('perl')
 options=('!emptydirs')
-source=("http://search.cpan.org/CPAN/authors/id/G/GB/GBARR/TimeDate-${pkgver}.tar.gz")
-sha1sums=('db2f810bf665062998ffc1ba873c29287120f3f5')
+source=("https://cpan.metacpan.org/authors/id/A/AT/ATOOMIC/$_pkgname-$pkgver.tar.gz")
+sha512sums=('7c451c3a69b32db1ec8ec21462eef2ac5e3a63f8eb6521260362a396f39c0c0f93efaf6f2903ade82175b391f09b7d6f6121b68fbf9f5dde421a8b5dd65476bf')
 
 build() {
-  cd "$srcdir/TimeDate-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
 
@@ -22,7 +23,8 @@ build() {
 }
 
 package() {
-  cd "$srcdir/TimeDate-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   make DESTDIR="$pkgdir" install
 }
+

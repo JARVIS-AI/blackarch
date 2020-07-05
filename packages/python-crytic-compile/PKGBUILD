@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-crytic-compile
+_pkgname='crytic-compile'
+pkgver=0.1.8
+pkgrel=1
+pkgdesc='Library to help smart contract compilation.'
+arch=('any')
+url='https://github.com/crytic/crytic-compile'
+license=('GPL3')
+depends=('python' 'python-pysha3')
+makedepends=('python-setuptools')
+options=(!emptydirs)
+source=("https://files.pythonhosted.org/packages/82/d0/370cf90a6db7f3331fcac9b6f4fe55579fd3a04e7eb05f4fb6b9801c08c6/$_pkgname-$pkgver.tar.gz")
+sha512sums=('3501e6725664aeb4669056242fecce302fcae5c070266c5ba3369c5c674976bfd612ba801e982f2bca7a266365207e40b7f608e7f1017db0b03858dc0d7571bd')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

@@ -1,9 +1,9 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='goldeneye'
-pkgver=16.7a38fe9
-pkgrel=4
+pkgname=goldeneye
+pkgver=23.02953dd
+pkgrel=1
 groups=('blackarch' 'blackarch-dos')
 pkgdesc='A HTTP DoS test tool. Attack Vector exploited: HTTP Keep Alive + NoCache.'
 arch=('any')
@@ -11,28 +11,29 @@ url='https://github.com/jseidl/GoldenEye'
 license=('GPL3')
 depends=('python2')
 makedepends=('git')
-source=('git+https://github.com/jseidl/GoldenEye.git')
-sha1sums=('SKIP')
+source=("$pkgname::git+https://github.com/jseidl/GoldenEye.git")
+sha512sums=('SKIP')
 
 pkgver() {
-  cd "$srcdir/GoldenEye"
+  cd $pkgname
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
 package() {
-  cd "$srcdir/GoldenEye"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/goldeneye"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  cp -a * "$pkgdir/usr/share/goldeneye"
+  cp -a * "$pkgdir/usr/share/$pkgname"
 
-  cat > "$pkgdir/usr/bin/goldeneye" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-cd /usr/share/goldeneye
-exec python2 goldeneye.py "\$@"
+cd /usr/share/$pkgname
+exec python2 $pkgname.py "\$@"
 EOF
 
-  chmod +x "$pkgdir/usr/bin/goldeneye"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
 }
+

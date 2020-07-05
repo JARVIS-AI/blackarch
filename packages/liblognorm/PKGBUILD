@@ -1,19 +1,19 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='liblognorm'
-pkgver='2.0.2'
+pkgname=liblognorm
+pkgver=2.0.6
 pkgrel=1
 pkgdesc='Log normalization library for rsyslog.'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.liblognorm.com/'
 license=('GPL2')
-depends=('libee' 'json-c' 'python2-sphinx')
-source=("http://www.liblognorm.com/files/download/liblognorm-${pkgver}.tar.gz")
-sha1sums=('dca441d5384fbba6214c2439fb69d5b99afb82f5')
+depends=('libee' 'json-c' 'python2-sphinx' 'libfastjson')
+source=("http://www.liblognorm.com/files/download/$pkgname-$pkgver.tar.gz")
+sha512sums=('0b4ee55eb54920dd096fdd6d6dcc2263bc52e74442d86503bfebf26b31492a8c1b67cb3b709ecc8b96cc53252151515719027306b2b6f7ba3404adc5a48cf125')
 
 build() {
-  cd "$srcdir/liblognorm-$pkgver"
+  cd "$pkgname-$pkgver"
 
   ./configure --prefix=/usr
 
@@ -21,7 +21,8 @@ build() {
 }
 
 package() {
-  cd "$srcdir/liblognorm-$pkgver"
+  cd "$pkgname-$pkgver"
 
   make DESTDIR="$pkgdir" install
 }
+

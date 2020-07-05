@@ -1,0 +1,32 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-libfsapfs-python
+pkgname=('python2-libfsapfs-python' 'python-libfsapfs-python')
+_pkgname=libfsapfs-python
+pkgver=20200416
+pkgrel=1
+pkgdesc='Library and tools to access the Apple File System (APFS).'
+url='https://github.com/libyal/libfsapfs'
+arch=('x86_64' 'aarch64')
+license=('LGPLv3')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/89/30/e216f3332e743be6cd2f628ebb4815b7cf6da69c6907f63ad83adf167819/$_pkgname-$pkgver.tar.gz")
+sha512sums=('74190dadb34a1894128106433c1aca6b3c522c336c5818e80141bd34e155341ddc28a4142b4e64e8c84a670fa44ab9c1ac09bfe32d9479b8eebf4b80d6fbfe59')
+
+package_python2-libfsapfs-python() {
+  depends=('python2')
+
+  cd "libfsapfs-$pkgver"
+
+  python2 setup.py install --root="$pkgdir" --optimize=1
+}
+
+package_python-libfsapfs-python() {
+  depends=('python')
+
+  cd "libfsapfs-$pkgver"
+
+  python setup.py install --root="$pkgdir" --optimize=1
+}
+

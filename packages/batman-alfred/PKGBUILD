@@ -1,26 +1,28 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='batman-alfred'
-pkgver='2016.4'
+pkgname=batman-alfred
+_pkgname=alfred
+pkgver=2020.1
 pkgrel=1
 pkgdesc='Almighty Lightweight Fact Remote Exchange Daemon'
 groups=('blackarch' 'blackarch-wireless')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.open-mesh.org/'
 license=('GPL')
 depends=('gpsd' 'libnl')
-source=("http://downloads.open-mesh.org/batman/releases/batman-adv-${pkgver}/alfred-${pkgver}.tar.gz")
-sha1sums=('45b478afd44e2c465c83cda11b93936c8090102a')
+source=("https://downloads.open-mesh.org/batman/releases/batman-adv-$pkgver/$_pkgname-$pkgver.tar.gz")
+sha512sums=('0dc59344552a15ccd73b6ed2407a1d5e2bebe0f2f262502f814aaf2c595c48deb7ee8a757da86fda1d04dc75a7063332409f704fd294b46de54a4afd099e0979')
 
 build() {
-  cd "$srcdir/alfred-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   make
 }
 
 package() {
-  cd "$srcdir/alfred-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   make DESTDIR="$pkgdir" PREFIX=/usr SBINDIR=/usr/bin install
 }
+

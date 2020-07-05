@@ -1,54 +1,67 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='faraday'
-pkgver=3459.88cc8ee3
-pkgrel=1
+pkgname=faraday
+pkgver=9269.4625bd369
+pkgrel=2
 pkgdesc='A new concept (IPE) Integrated Penetration-Test Environment a multiuser Penetration test IDE. Designed for distribution, indexation and analyze of the generated data during the process of a security audit.'
 groups=('blackarch' 'blackarch-scanner' 'blackarch-exploitation'
         'blackarch-fuzzer' 'blackarch-fingerprint' 'blackarch-automation'
         'blackarch-misc')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.faradaysec.com/'
-if [[ $CARCH = 'x86_64' ]]; then
-  depends=('zsh' 'java-environment' 'python2-pip' 'python2-flask'
-           'python2-tornado' 'python2-dateutil' 'python2-colorama' 'couchdb'
-           'pyqt3' 'python2-pysvn' 'python2-ipy' 'libpqxx' 'python2-couchdbkit'
-           'python2-requests' 'python2-whoosh' 'python2-psycopg2'
-           'python2-restkit' 'python2-mockito' 'lib32-glibc' 'ruby1.9'
-           'python2-ipy')
-else
-  depends=('zsh' 'java-environment' 'python2-pip' 'python2-flask'
-           'python2-tornado' 'python2-dateutil' 'python2-colorama' 'couchdb'
-           'pyqt3' 'python2-pysvn' 'python2-ipy' 'libpqxx' 'python2-couchdbkit'
-           'python2-requests' 'python2-whoosh' 'python2-psycopg2'
-           'python2-restkit' 'python2-mockito' 'ruby1.9' 'python2-ipy')
-fi
+depends=('couchdb' 'python' 'gtk3' 'gobject-introspection' 'python-argparse'
+         'gobject-introspection-runtime' 'python-gobject' 'vte3' 'zsh' 'curl'
+         'python-couchdb' 'python-mockito' 'python-whoosh' 'python-ipy'
+         'python-restkit' 'python-requests' 'python-tornado' 'python-flask'
+         'python-colorama' 'java-environment' 'python-pip' 'python-dateutil'
+         'pyqt3' 'libpqxx' 'python-psycopg2' 'ruby' 'python-apispec-webframeworks'
+         'python-lxml' 'python-pysqlite3' 'python-sphinx' 'python-twisted'
+         'python-beautifulsoup4' 'python-sqlalchemy' 'python-werkzeug'
+         'python-w3af-api-client' 'python-urllib3' 'python-responses'
+         'python-simplejson' 'python-pytz' 'python-pytest' 'python-msgpack'
+         'python-itsdangerous' 'python-deprecation' 'python-click'
+         'python-slugify' 'python-hypothesis' 'python-autobahn'
+         'python-pgcli' 'python-alembic' 'python-websocket-client'
+         'python-tqdm' 'python-flask-sqlalchemy' 'python-marshmallow'
+         'python-pillow' 'python-service-identity' 'python-webargs'
+         'python-selenium' 'python-shodan' 'python-bcrypt' 'python-simplekv'
+         'python-wtforms' 'python-flask-login' 'python-flask-security'
+         'python-pyopenssl' 'python-pyasn1' 'python-tqdm' 'python-apispec'
+         'python-marshmallow-sqlalchemy' 'python-flask-classful'
+         'python-filteralchemy-fork' 'python-filedepot' 'python-nplusone'
+         'python-flask-restless' 'python-syslog-rfc5424-formatter'
+         'python-flask-kvsession-fork' 'python-distro' 'python-faraday-plugins'
+         'postgresql')
 makedepends=('git')
 options=('!strip')
 license=('GPL')
-source=('git+https://github.com/infobyte/faraday.git')
-sha1sums=('SKIP')
+source=("git+https://github.com/infobyte/$pkgname.git"
+        'requirements.txt.patch')
+sha512sums=('SKIP'
+            '8b9699a3e672e7fa07a1350e0ccb83e8979dee3c71f5068ca0e02ab52dc6830caf7ad8e978229132b787351c1c3f24ebc6a9d5dbf6bfc04cfa97fc34ce13dffc')
 
 pkgver() {
-  cd "$srcdir/faraday"
+  cd $pkgname
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
-package() {
-  cd "$srcdir/faraday"
+prepare() {
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/$pkgname"
-
-  cp -a --no-preserve=ownership * "$pkgdir/usr/share/faraday"
-
-  cat > "$pkgdir/usr/bin/faraday" << EOF
-#!/bin/sh
-cd /usr/share/faraday/
-exec python2 faraday.py "\$@"
-EOF
-
-  chmod +x "$pkgdir/usr/bin/faraday"
+  patch -p0 < ../requirements.txt.patch
 }
+
+build() {
+  cd $pkgname
+
+  python setup.py build
+}
+
+package() {
+  cd $pkgname
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

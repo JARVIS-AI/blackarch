@@ -1,42 +1,42 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='freeipmi'
-pkgver='1.5.5'
-pkgrel=2
+pkgname=freeipmi
+pkgver=1.6.5
+pkgrel=1
 pkgdesc='Sensor monitoring, system event monitoring, power control, and serial-over-LAN (SOL).'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 groups=('blackarch' 'blackarch-networking' 'blackarch-misc')
 url='http://www.gnu.org/software/freeipmi/'
 license=('GPL')
 depends=('libgcrypt')
 options=('!libtool')
-source=("http://ftp.gnu.org/gnu/freeipmi/freeipmi-${pkgver}.tar.gz")
-sha1sums=('634f5d0463c56ed024612c78f026fdb7e1cb834f')
+source=("http://ftp.gnu.org/gnu/$pkgname/$pkgname-$pkgver.tar.gz")
+sha512sums=('390f588015d4c359dccaa3fcaefe5ec7754aad559ace4cc6f4fafcde6ef292f16e014a1253cf0c03d40511539f8e444d8302398540278a5846ad68e7796267ba')
 
 build() {
-  cd "$srcdir/freeipmi-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  ./configure --prefix=/usr --sbindir=/usr/bin --mandir=/usr/share/man \
-    --sysconfdir=/etc --localstatedir=/var/lib --infodir=/usr/share/info
+  if [[ "$CARCH" == "i686" || "$CARCH" == "x86_64" ]];
+  then
+    ./configure --prefix=/usr --sbindir=/usr/bin --mandir=/usr/share/man \
+      --sysconfdir=/etc --localstatedir=/var/lib --infodir=/usr/share/info
+  else
+    ./configure --prefix=/usr --sbindir=/usr/bin --mandir=/usr/share/man \
+      --sysconfdir=/etc --localstatedir=/var/lib --infodir=/usr/share/info \
+      --build=arm
+  fi
 
   make
 }
 
 package() {
-  cd "$srcdir/freeipmi-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  make DESTDIR=$pkgdir/ install
+ make DESTDIR="$pkgdir" install
 
-  mv "$pkgdir/etc/init.d" "$pkgdir/etc/rc.d"
   mv "$pkgdir/etc/sysconfig" "$pkgdir/etc/conf.d"
-
-  sed -e 's|/etc/init.d/|/etc/rc.d/|g' \
-    -e 's|/etc/rc.d/init.d/functions|/etc/rc.d/functions|g' \
-    -i "$pkgdir"/etc/rc.d/*
-
-  sed -e 's|CONFFILE=/etc/sysconfig/bmc-watchdog|CONFFILE=/etc/cond.f/bmc-watchdog|g' \
-    -i "$pkgdir/etc/rc.d/bmc-watchdog"
 
   rm -Rf "$pkgdir/usr/share/info/dir"
 }
+

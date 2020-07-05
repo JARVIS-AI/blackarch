@@ -1,0 +1,50 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-xdis
+pkgname=('python2-xdis' 'python-xdis')
+_pkgname=xdis
+pkgver=5.0.1
+pkgrel=1
+pkgdesc='Python cross-version byte-code disassembler and marshal routines.'
+url='https://pypi.org/project/xdis/#files'
+arch=('any')
+license=('GPL2')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/22/5f/b1c50f20f4df2a45f53f2c60f223f73903379df22bd61c54fd590aaadf35/$_pkgname-$pkgver.tar.gz")
+sha512sums=('465eb9f686293ea72ca9ad0031c3aed5a0832dca40c8b50fa80c13e508680628163a5cf81b3d1bdfd2c6d6afbe03bcfcfca9581bdeae6bfa4f578838534ffd6d')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-xdis() {
+  depends=('python2')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+
+  mv "$pkgdir/usr/bin/pydisasm" "$pkgdir/usr/bin/pydisasm2"
+}
+
+package_python-xdis() {
+  depends=('python')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

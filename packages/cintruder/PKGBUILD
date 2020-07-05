@@ -1,47 +1,54 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='cintruder'
-pkgver='0.2.0'
-pkgrel=1
+pkgname=cintruder
+pkgver=13.4a2f6b8
+pkgrel=2
 groups=('blackarch' 'blackarch-cracker' 'blackarch-webapp')
 pkgdesc='An automatic pentesting tool to bypass captchas.'
 arch=('any')
-url='http://cintruder.sourceforge.net/'
+url='https://github.com/epsylon/cintruder'
 license=('GPL3')
-depends=('python2' 'python2-pycurl' 'python2-lxml' 'python2-pillow')
-source=("http://downloads.sourceforge.net/project/cintruder/cintruder_v${pkgver}.tar.gz")
-sha1sums=('b8972968d1231341e5b43b88d09f13564beb0fdc')
+depends=('python2' 'python2-pycurl' 'python2-lxml' 'python2-pillow6')
+makedepends=('git')
+source=("git+https://github.com/epsylon/$pkgname.git")
+sha512sums=('SKIP')
+
+pkgver() {
+  cd $pkgname
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
 
 prepare() {
-  cd "$srcdir/cintruder"
+  cd $pkgname
 
-  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' cintruder
+  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' $pkgname
 }
 
 package() {
-  cd "$srcdir/cintruder"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/cintruder"
-  mkdir -p "$pkgdir/usr/share/doc/cintruder"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
+  install -dm 755 "$pkgdir/usr/share/doc/$pkgname"
 
-  cd doc
+  install -Dm 644 docs/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
-  install -Dm644 -t "$pkgdir/usr/share/doc/cintruder" AUTHOR CHANGELOG COPYING \
-    INSTALL README THANKS
+  rm docs/LICENSE
 
-  cd ..
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname" docs/*
 
-  rm -rf doc/
+  rm -rf docs/
 
-  cp -a * "$pkgdir/usr/share/cintruder"
+  cp -a * "$pkgdir/usr/share/$pkgname/"
 
-  cat > "$pkgdir/usr/bin/cintruder" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-cd /usr/share/cintruder
-exec python2 cintruder "\$@"
+cd /usr/share/$pkgname
+exec python2 $pkgname "\$@"
 EOF
 
-  chmod +x "$pkgdir/usr/bin/cintruder"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
 }
+

@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-google-cloud-resource-manager
+_pkgname=google-cloud-resource-manager
+pkgver=0.30.2
+pkgrel=1
+pkgdesc='Google Cloud Resource Manager API client library.'
+arch=('any')
+url='https://pypi.org/project/google-cloud-resource-manager/#files'
+license=('Apache')
+depends=('python' 'python-google-cloud-core')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/4b/be/9d43cd97ec8a265f260025a5ec04ea9e8af1d9a669efdd281fac20b5df81/$_pkgname-$pkgver.tar.gz")
+sha512sums=('32fcc421f8c2de5708cbadb7ef93f8918106af940717c91ea4fceba7fe30afa85ce4fa15ab05afb6f3bfb0078d09202c252c8a6cac68ed6f21a0d1eb2e109657')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

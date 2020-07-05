@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-python-dxf
+_pkgname=python-dxf
+pkgver=7.7.0
+pkgrel=1
+pkgdesc='Package for accessing a Docker v2 registry.'
+url='https://pypi.org/project/python-dxf/#files'
+arch=('any')
+license=('MIT')
+depends=('python' 'python-jwcrypto' 'python-tqdm' 'python-requests'
+         'python-www-authenticate')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/17/92/1ba2c139a14e6b572d937740b3eceb1d40b00701a570118509b7fbada84e/$_pkgname-$pkgver.tar.gz")
+sha512sums=('1e28c24dc7fc78e279e7d1ec36b99c7c523528c37f459c3da602e0926fb3c560cdcc0371c9c2c3e788e79624d5716cf1101f54ebdb17095708496ea5e54d4449')
+
+build() {
+  cd "python-dxf-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "python-dxf-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

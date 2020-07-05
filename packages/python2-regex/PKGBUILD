@@ -1,26 +1,28 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='python2-regex'
-pkgver='2016.11.21'
+pkgname=python2-regex
+_pkgname=regex
+pkgver=2019.11.1
 pkgrel=1
 pkgdesc='Alternative regular expression module, to replace re.'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url='https://bitbucket.org/mrabarnett/mrab-regex'
+url='https://pypi.org/project/regex/#files'
+arch=('x86_64' 'aarch64')
+license=('MIT')
 depends=('python2')
 makedepends=('python2-setuptools')
-license=('PSF')
-source=("https://pypi.python.org/packages/da/5a/c6ab99673e6b289aa3f1b043f8438d6aa25a352c00aef2af37c0c0c9de3c/regex-${pkgver}.tar.gz")
-sha1sums=('d86a0ab5721fbe5d238658b75ccf606164b36008')
+source=("https://files.pythonhosted.org/packages/fc/1d/13cc7d174cd2d05808abac3f5fb37433e30c4cd93b152d2a9c09c926d7e8/$_pkgname-$pkgver.tar.gz")
+sha512sums=('fcb7d37f77937815428909ec3cf86785779ee80389a859f082c0f4b3c955779de6674490857737bc595f5f3a1c430cf237ba384ed54c37d254a8f0ffa1577148')
 
 build() {
-  cd "$srcdir/regex-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   python2 setup.py build
 }
 
 package() {
-  cd "$srcdir/regex-$pkgver"
+  cd "$_pkgname-$pkgver"
 
-  python2 setup.py install --root="$pkgdir" --optimize=1 --skip-build
+  python2 setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
 }
+

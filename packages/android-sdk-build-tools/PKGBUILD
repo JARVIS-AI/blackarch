@@ -1,41 +1,34 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='android-sdk-build-tools'
-pkgver='r23.0.1'
-_pkgver='23.0.1'
-_android='android-6.0'
+# Contributor: xgdgsc <xgdgsc @t gmail dot com>
+
+_android=android-10
+_sdk=android-sdk
+pkgname=android-sdk-build-tools
+pkgver=r29.0.3
 pkgrel=1
 pkgdesc='Build-Tools for Google Android SDK (aapt, aidl, dexdump, dx, llvm-rs-cc)'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://developer.android.com/sdk/index.html'
-license=('custom')
-depends=('gcc-libs' 'zlib')
-if [[ $CARCH == x86_64 ]]; then
-  depends=('lib32-gcc-libs' 'lib32-zlib')
-fi
-source=("http://dl-ssl.google.com/android/repository/build-tools_${pkgver}-linux.zip")
-sha1sums=('b6ba7c399d5fa487d95289d8832e4ad943aed556')
+license=('custom:unknown')
+depends_i686=('gcc-libs' 'zlib')
+depends_x86_64=('lib32-gcc-libs' 'lib32-zlib')
+source=("https://dl-ssl.google.com/android/repository/build-tools_$pkgver-linux.zip")
+sha512sums=('845e527b3ef809d5e32bdce0023401ae80c545504f152d7c05ccef64e4006def6cbda07a295a66518356e992abbbe8f30522c5e63d6eb12a1651c614643602d8')
 options=('!strip')
 
 package() {
-  cd "$srcdir"
+  cd "$pkgdir"
+  ver=$(cat "${srcdir}/$_android/source.properties" |grep ^Pkg.Revision=|sed 's/Pkg.Revision=\([0-9.]*\).*/\1/')
 
-  mkdir -p "$pkgdir/opt"
-  mkdir -p "$pkgdir/etc/profile.d"
-
-  install -Dm644 "$srcdir/$_android/NOTICE.txt" \
-    "$pkgdir/usr/share/licenses/android-sdk-build-tools/NOTICE.txt"
-
-  echo "export PATH=\$PATH:/opt/android-sdk/build-tools/$_pkgver/" \
-    > "$pkgdir/etc/profile.d/android-sdk-build-tools.sh"
-  echo "setenv PATH \${PATH}:/opt/android-sdk/build-tools/$_pkgver/" \
-    > "$pkgdir/etc/profile.d/android-sdk-build-tools.csh"
-  chmod 755 "$pkgdir"/etc/profile.d/android-sdk-build-tools.{csh,sh}
-
-  mkdir -p "$pkgdir/opt/android-sdk/build-tools/$_pkgver"
-
-  cp -r "$srcdir/$_android"/* "$pkgdir/opt/android-sdk/build-tools/$_pkgver"
-
-  chmod +Xr -R "$pkgdir/opt/android-sdk/build-tools/$_pkgver"
+  install -dm 755 "$pkgdir/opt/$_sdk/build-tools/$ver"
+  install -Dm 644 "$srcdir/$_android/NOTICE.txt" usr/share/licenses/$pkgname/NOTICE.txt
+  # mkdir -p opt etc/profile.d
+  # echo 'export PATH=$PATH:/opt/android-sdk/build-tools/'"$_ver/" > etc/profile.d/${pkgname}.sh
+  # echo 'setenv PATH ${PATH}:/opt/android-sdk/build-tools/'"$_ver/" > etc/profile.d/${pkgname}.csh
+  # chmod 755 etc/profile.d/${pkgname}.{csh,sh}
+  cp -r "$srcdir/$_android/"* "$pkgdir/opt/$_sdk/build-tools/$ver"
+  chmod +Xr -R "$pkgdir/opt/$_sdk/build-tools/$ver"
 }
+

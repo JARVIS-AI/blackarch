@@ -1,30 +1,32 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='batman-adv'
-pkgver='2016.4'
+pkgname=batman-adv
+pkgver=2020.1
 pkgrel=1
 groups=('blackarch' 'blackarch-wireless')
 pkgdesc='Batman kernel module, (included upstream since .38)'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.open-mesh.net/'
 license=('GPL')
 depends=('libnl')
 makedepends=('linux-headers')
-install='batman-adv.install'
-source=("http://downloads.open-mesh.org/batman/releases/batman-adv-$pkgver/batman-adv-$pkgver.tar.gz")
-sha1sums=('98a5878da975891691ea396eca7b86023b92804e')
+source=("https://downloads.open-mesh.org/batman/releases/$pkgname-$pkgver/$pkgname-$pkgver.tar.gz")
+sha512sums=('7b207cd0e7359abf381cde3829333653f62ec035d08a0435db09ccc46a9ebdbe8449b0da77453a1d03b0d316a5763c7283fd27b7da725f8598d34372b5898767')
+install="$pkgname.install"
 
 build() {
-  cd "$srcdir/batman-adv-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  make KERNELPATH=/usr/lib/modules/$(uname -r)/build
+  make KERNELPATH="/usr/lib/modules/$(uname -r)/build"
 }
 
 package() {
-  cd "$srcdir/batman-adv-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  install -Dm644 net/batman-adv/batman-adv.ko \
-    "$pkgdir/usr/lib/modules/$(uname -r)/updates/net/batman-adv/batman_adv.ko"
-  install -Dm644 README "$pkgdir/usr/share/doc/batman-adv/README"
+  install -Dm 644 "net/$pkgname/batman-adv.ko" \
+    "$pkgdir/usr/lib/modules/$(uname -r)/updates/net/$pkgname/batman_adv.ko"
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" README.external.rst \
+    CHANGELOG.rst MAINTAINERS
 }
+

@@ -1,39 +1,42 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='netzob'
-pkgver='1.0rc1'
-pkgrel=2
+pkgname=netzob
+pkgver=1.0.2
+pkgrel=5
 pkgdesc='An open source tool for reverse engineering, traffic generation and fuzzing of communication protocols.'
 groups=('blackarch' 'blackarch-reversing' 'blackarch-fuzzer'
         'blackarch-networking')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.netzob.org/'
 license=('GPL3')
-depends=('python2' 'python2-gobject' 'gtk3' 'impacket' 'libxml2' 'libxslt'
-        'python2-lxml' 'graphviz' 'python2-bitarray' 'python2-jsonpickle'
-        'python2-netaddr' 'python2-numpy' 'python2-colorama' 'python2-bintrees')
-makedepends=('setuptools')
-source=("https://www.netzob.org/repository/${pkgver}/Netzob-${pkgver}.tar.gz")
-sha1sums=('46b46202d9a0b9781ed8330eedefded538f30622')
+depends=('python' 'python-gobject' 'gtk3' 'impacket' 'libxml2' 'libxslt'
+        'python-lxml' 'graphviz' 'python-bitarray' 'python-jsonpickle'
+        'python-netaddr' 'python-numpy' 'python-colorama' 'python-bintrees'
+        'python-pcapy' 'python-werkzeug' 'python-pylstar' 'python-mock'
+        'python-flask' 'python-arpreq')
+makedepends=('python-setuptools')
+source=("https://github.com/netzob/netzob/archive/Release/netzob-$pkgver.tar.gz")
+sha512sums=('a56a1ab0a1066aa7825cabb475225756f0009a857d2c6c8d7ed8aba8753aec5f401ba0f170db6b6677875f7a0388e0443eee8fa3709d05b6e9f9e5c04f1c9f97')
 
 build() {
-  cd "$srcdir/Netzob-$pkgver"
+  cd "$pkgname-Release-netzob-$pkgver/$pkgname"
 
-  python2 setup.py build
+  python setup.py build
 }
 
 package() {
-  cd "$srcdir/Netzob-$pkgver"
+  cd "$pkgname-Release-netzob-$pkgver/$pkgname"
 
-  install -Dm644 -t "$pkgdir/usr/share/doc/netzob/" AUTHORS.txt README.rst \
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" AUTHORS.txt README.rst \
     NEWS.rst
-  install -Dm644 COPYING.txt "$pkgdir/usr/share/licenses/netzob/COPYING.txt"
+  install -Dm 644 COPYING.txt "$pkgdir/usr/share/licenses/$pkgname/COPYING"
 
-  python2 setup.py install --root="$pkgdir" --optimize=1
+  python setup.py install --root="$pkgdir" --optimize=1 --skip-build
 
   find "$pkgdir/usr/share" -type f -exec chmod 644 {} \;
 
   chmod 644 \
-    "$pkgdir"/usr/lib/python2.7/site-packages/Netzob-${pkgver}-py2.7.egg-info/*
+    "$pkgdir"/usr/lib/python*/site-packages/Netzob-${pkgver}-py*.egg-info/*
 }
+

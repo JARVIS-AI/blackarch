@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-hstspreload
+_pkgname=hstspreload
+pkgver=2020.6.30
+pkgrel=1
+pkgdesc='Chromium HSTS Preload list as a Python package and updated daily.'
+arch=('any')
+url='https://pypi.org/project/hstspreload/#files'
+license=('BSD')
+depends=('python')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/9b/37/daccdd0af88f798dd51f1e4d1b7215c2df6f6db9831e2b71052bbf8eca4a/$_pkgname-$pkgver.tar.gz")
+sha512sums=('1a9b6114443602e532ce5f0acb9a2af8a5d07dcccafd2663386cffdf4f653265c8e908feedd12efb52208d41cd3b2d9c18e51c6e43dd51df7f6bb85dc064ca9f')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

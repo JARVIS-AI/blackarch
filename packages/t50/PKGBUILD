@@ -1,35 +1,36 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='t50'
-pkgver='5.6.7'
-pkgrel=1
+pkgname=t50
+pkgver=5.8.7
+pkgrel=3
 groups=('blackarch' 'blackarch-dos' 'blackarch-networking')
 pkgdesc='Experimental Multi-protocol Packet Injector Tool.'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url='http://t50.sourceforge.net/'
+arch=('x86_64' 'aarch64')
+url='https://gitlab.com/fredericopissarra/t50/-/releases'
 license=('GPL2')
 depends=('glibc')
-source=("http://netix.dl.sourceforge.net/project/t50/t50-5.6/t50-${pkgver}.tar.gz")
-sha1sums=('8e8db8058a266df69fece84785d2607b6caba513')
+source=("https://gitlab.com/fredericopissarra/$pkgname/-/archive/v$pkgver/$pkgname-v$pkgver.tar.gz")
+sha512sums=('f9bfb0e3eeb8d625c49a9115ed7f642c6b74cfbbf0608d6696666affa7b14c81f3152275472a51489a2df3613ff59c626793529bc5603aa32aceb6cf43e433f5')
 
 build() {
-  cd "$srcdir/t50-${pkgver}-fix1"
-
-  ./configure --prefix=/usr --sbindir=/usr/bin
+  cd "$pkgname-v$pkgver"
 
   make
 }
 
 package() {
-  cd "$srcdir/t50-${pkgver}-fix1"
+  cd "$pkgname-v$pkgver"
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/man/man1"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/man/man8"
 
-  make DESTDIR="$pkgdir" install
+  #make DESTDIR="$pkgdir" install
 
-  #install -Dm755 release/t50 "$pkgdir/usr/bin/t50"
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/t50/LICENSE"
-  install -Dm644 -t "$pkgdir/usr/share/doc/t50/" README TODO CHANGELOG
+  install -Dm 755 "bin/$pkgname" "$pkgdir/usr/bin/$pkgname"
+  install -Dm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" TODO CHANGELOG doc/*.md \
+    doc/README.modules
+  install -Dm 644 "doc/$pkgname.8" "$pkgdir/usr/share/man/man8/$pkgname.8"
 }
+

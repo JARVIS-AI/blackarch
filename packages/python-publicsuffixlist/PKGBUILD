@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-publicsuffixlist
+pkgname=('python2-publicsuffixlist' 'python-publicsuffixlist')
+_pkgname=publicsuffixlist
+pkgver=0.7.3
+pkgrel=1
+pkgdesc='Python publicsuffixlist implementation.'
+arch=('any')
+url='https://pypi.python.org/pypi/publicsuffixlist'
+license=('MPL')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/b1/46/0bd9d2a26f4b2e9c24a2a6f5e201e06db94d21b4b8947f6f43a843304dd8/$_pkgname-$pkgver.tar.gz")
+sha512sums=('dce363225ea09296100b26f7fea726cf059d53696aa1d4e5429ca8baccfa18106f14e20aabb9cbfe3619f3b7415f1839e79af7f583e6ac6ea0777702cd4106f1')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-publicsuffixlist() {
+  depends=('python2' 'python2-requests')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" -O1 --skip-build
+
+  mv "$pkgdir/usr/bin/$_pkgname-download" "$pkgdir/usr/bin/$_pkgname-download2"
+}
+
+package_python-publicsuffixlist() {
+  depends=('python' 'python-requests')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" -O1 --skip-build
+}
+

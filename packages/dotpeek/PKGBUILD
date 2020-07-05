@@ -1,0 +1,20 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=dotpeek
+pkgver=2020.1.1
+pkgrel=1
+pkgdesc='Free .NET Decompiler and Assembly Browser.'
+url='https://www.jetbrains.com/decompiler/'
+groups=('blackarch' 'blackarch-windows' 'blackarch-decompiler'
+        'blackarch-binary' 'blackarch-reversing')
+license=('custom:unknown')
+arch=('any')
+source=("$pkgname-$pkgver.exe::https://download.jetbrains.com/resharper/ReSharperUltimate.$pkgver/dotPeek64.$pkgver.exe")
+sha512sums=('dc92c5b1c9a1ba52af6b49aeecd8954f48cca784135f4bd961c27585d850493e4bc24fb4b85258517f88ce1941a02f9cf0ef9a0e215456afeb343b8c5026f023')
+
+package() {
+  install -Dm 644 "$pkgname-$pkgver.exe" \
+    "$pkgdir/usr/share/windows/$pkgname/$pkgname-$pkgver.exe"
+}
+

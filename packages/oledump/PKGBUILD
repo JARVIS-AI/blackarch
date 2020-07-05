@@ -1,39 +1,36 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='oledump'
-pkgver='0.0.25'
+pkgname=oledump
+pkgver=0.0.50
 pkgrel=1
 groups=('blackarch' 'blackarch-binary' 'blackarch-malware')
 pkgdesc='Analyze OLE files (Compound File Binary Format). These files contain streams of data. This tool allows you to analyze these streams.'
 arch=('any')
 url='http://blog.didierstevens.com/programs/oledump-py/'
 license=('custom:unknown')
-depends=('python2' 'python2-lxml' 'python2-yara')
-source=("https://didierstevens.com/files/software/oledump_V${pkgver//./_}.zip")
-sha1sums=('d96e0e37c7da49b6afe6242b4a4e405683d34384')
+depends=('python' 'python-lxml' 'python-yara' 'python-olefile')
+source=("https://didierstevens.com/files/software/${pkgname}_V${pkgver//./_}.zip")
+sha512sums=('3acd85f6b835de97132b2b8d76b424044674fcf381434e1d37f0926e8d48e4b2d56a8f22ee09433418d8962b8146d04f4a8b65c8c168a71dd6a300ba67941696')
 
 prepare() {
-  cd "$srcdir"
-
-  find . -type f -name '*.py' -exec sed -i 's|env python|env python2|' {} +
+  find . -type f -name '*.py' -exec sed -i 's|env python|env python|' {} +
 }
 
 package() {
-  cd "$srcdir"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/oledump"
+  rm "${pkgname}_V${pkgver//./_}.zip"
 
-  rm oledump_V${pkgver//./_}.zip
+  cp -a * "$pkgdir/usr/share/$pkgname/"
 
-  cp -a * "$pkgdir/usr/share/oledump"
-
-  cat > "$pkgdir/usr/bin/oledump" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-cd /usr/share/oledump
-exec python2 oledump.py "\$@"
+cd /usr/share/$pkgname
+exec python $pkgname.py "\$@"
 EOF
 
-  chmod a+x "$pkgdir/usr/bin/oledump"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
 }
+

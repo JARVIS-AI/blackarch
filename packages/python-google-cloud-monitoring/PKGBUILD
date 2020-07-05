@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-google-cloud-monitoring
+_pkgname=google-cloud-monitoring
+pkgver=1.0.0
+pkgrel=1
+pkgdesc='Stackdriver Monitoring API client library.'
+arch=('any')
+url='https://pypi.org/project/google-cloud-monitoring/#files'
+license=('Apache')
+depends=('python' 'python-google-api-core')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/30/44/d423d11353d8a74be34f4843ab37aeee6e966592f79919cde42bd464d853/$_pkgname-$pkgver.tar.gz")
+sha512sums=('e9013f2626d1f772e111fc664a56274b831f3568d3d9f716a2d1aeced7fe5e7e8c9e182f08d0b30db8e839d7977e2d0caee2740232d48056bd1c0caafb33edbc')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-azure-mgmt-sql
+_pkgname=azure-mgmt-sql
+pkgver=0.19.0
+pkgrel=1
+pkgdesc='Microsoft Azure SQL Management Client Library for Python.'
+arch=('any')
+url='https://pypi.org/project/azure-mgmt-sql/#files'
+license=('MIT')
+depends=('python')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/4b/cd/b1ba1825c0695b665a18e73f69f31dfd5eff2468578dcbd13ea0b53ea070/$_pkgname-$pkgver.zip")
+sha512sums=('e6ca71bf62f6519d108a89d25481f3f273157efebb455f276466c4acb6fb1176be9b6e2f158cb41c5c6e918c5f7803f8778e5aea6bc04e51dcadd2412b43daf8')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

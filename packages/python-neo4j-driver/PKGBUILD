@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+#
+# This PKGBUILD was extracted from AUR.
+# Creator: tuftedocelot tuftedocelot@fastmail.fm<
+# Changes by: petruknisme
+
+_pkgname=neo4j-python-driver
+pkgname=python-neo4j-driver
+pkgver=4.0.0b1
+pkgrel=2
+pkgdesc='Neo4j Bolt driver for Python'
+arch=('any')
+url='https://github.com/neo4j/neo4j-python-driver'
+license=('Apache')
+depends=('python' 'python-pytz')
+makedepends=('python-setuptools')
+source=("https://github.com/neo4j/$_pkgname/archive/$pkgver.zip")
+sha512sums=('ca693d2d541ca162f27c3d706e9efcf65284ea9c2205c93419119111854a4df33fd513be6f2cad923089202d3650290f94cd9948f7c606a18570c4c1ad10ca33')
+
+build(){
+  cd $_pkgname-$pkgver
+
+  python setup.py build
+}
+
+package() {
+  cd $_pkgname-$pkgver
+
+  python setup.py install --root="$pkgdir/" --prefix=/usr -O1 --skip-build
+
+  rm -rf "$pkgdir/usr/lib/python3.8/site-packages/tests"
+}
+

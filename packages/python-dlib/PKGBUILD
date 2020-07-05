@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-dlib
+_pkgname=dlib
+pkgver=19.20.0
+pkgrel=1
+pkgdesc='A toolkit for making real world machine learning and data analysis applications.'
+arch=('x86_64' 'aarch64')
+url='https://pypi.org/project/dlib/#files'
+license=('custom:unknown')
+depends=('python')
+makedepends=('python-setuptools' 'cmake')
+source=("https://files.pythonhosted.org/packages/f1/40/e407366816646bb452578997e6ca2140f004eec8f611e8512ee429ded2be/$_pkgname-$pkgver.tar.gz")
+sha512sums=('c40cb7aef16c2e3d1842dda8dd087cd55a6b135aa2c4c7573e2f58773ba287192af2a44b3f21cd03afa671557735148807c64db448dafb253fac679100524230')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

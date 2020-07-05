@@ -1,32 +1,42 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='sslyze'
-pkgver='0.14.1'
+pkgname=sslyze
+pkgver=3.0.8
 pkgrel=1
-groups=('blackarch' 'blackarch-misc')
+groups=('blackarch' 'blackarch-crypto' 'blackarch-scanner')
 pkgdesc='Python tool for analyzing the configuration of SSL servers and for identifying misconfigurations.'
-arch=('any')
-url='https://github.com/nabla-c0d3/sslyze/'
+arch=('x86_64' 'aarch64')
+url='https://github.com/nabla-c0d3/sslyze'
 license=('GPL2')
-depends=('python2' 'python2-nassl')
-makedepends=('python2-setuptools')
-source=("https://github.com/nabla-c0d3/sslyze/archive/${pkgver}.tar.gz")
-sha1sums=('b1fb45d0ed1843f3ea3c250b94b0d06d0fc1ca99')
+depends=('python' 'python-tls-parser' 'python-cryptography' 'python-nassl'
+         'python-typing_extensions')
+makedepends=('python-setuptools')
+source=("https://github.com/nabla-c0d3/$pkgname/archive/$pkgver.zip"
+        'setup.py.patch')
+sha512sums=('8df20b3e8b50299bc4a192842efeec62641b852e2e0a959437c3fdcb0162065bf714bcc2c08a68b84dc2497b44e9d841dad11991b7a94bcef8de7a56a8038255'
+            '2cab23839ba95d5137b3cfc25f20232389b66b2ece92e17f377e584761821458e346d513733f6227d0354ce6ad0019d2cd02365af341b07634b27cc54dc9985f')
+
+prepare() {
+  cd
+  #patch -p1 < setup.py.patch
+}
 
 build() {
-  cd "$srcdir/sslyze-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  python2 setup.py build
+  python setup.py build
 }
 
 package() {
-  cd "$srcdir/sslyze-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  python2 setup.py install --root="$pkgdir" --optimize=1
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
 
-  mv "$pkgdir/usr/bin/sslyze_cli.py" "$pkgdir/usr/bin/sslyze"
+  install -Dm 644 LICENSE.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
-  install -Dm644 README.md "$pkgdir/usr/share/doc/sslyze/README.md"
-  install -Dm644 LICENSE.txt "$pkgdir/usr/share/licenses/sslyze/LICENSE.txt"
+  rm -rf "$pkgdir/usr/lib/python3.8/site-packages/tests"
+
+  sed -i 's/sslyze==3.0.7/sslyze/' "$pkgdir/usr/bin/$pkgname"
 }
+

@@ -1,42 +1,46 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='golismero'
-pkgver=46.d6afae1
-pkgrel=3
+pkgname=golismero
+pkgver=73.7d605b9
+pkgrel=1
 groups=('blackarch' 'blackarch-webapp')
 pkgdesc='Opensource web security testing framework.'
 url='https://github.com/golismero/golismero'
 license=('custom')
 arch=('any')
-depends=('python2' 'python2-beautifulsoup3' 'python2-colorizer'
-         'python2-decorator' 'python2-django>=1.5' 'python2-dnspython'
-         'python2-netaddr' 'python2-nltk' 'python2-cjson' 'python2-requests'
-         'python2-requests_ntlm' 'python2-texttable' 'python2-tldextract')
+depends=('python2' 'python2-beautifulsoup3' 'python2-colorizer' 'python2-yaml'
+         'python2-decorator' 'python2-django' 'python2-dnspython'
+         'python2-pycurl' 'python2-netaddr' 'python2-nltk' 'python2-cjson'
+         'python2-requests' 'python2-requests-ntlm' 'python2-texttable'
+         'python2-tldextract' 'python2-docutils' 'python2-argcomplete'
+         'python2-pymongo' 'python2-simplejson' 'python2-pysqlite'
+         'python2-psycopg2' 'python2-argparse')
 makedepends=('git')
 options=('!strip')
-source=('git+https://github.com/golismero/golismero.git')
-sha1sums=('SKIP')
+source=("git+https://github.com/golismero/$pkgname.git")
+sha512sums=('SKIP')
 
 pkgver() {
-  cd "$srcdir/golismero"
+  cd $pkgname
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
 package() {
-  cd "$srcdir/golismero"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/share/golismero"
-  mkdir -p "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  cp -a * "$pkgdir/usr/share/golismero"
+  cp -a * "$pkgdir/usr/share/$pkgname"
 
-  cat > "$pkgdir/usr/bin/golismero" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-cd /usr/share/golismero
-exec python2 golismero.py "\$@"
+cd /usr/share/$pkgname
+exec python2 $pkgname.py "\$@"
 EOF
 
-  chmod +x "$pkgdir/usr/bin/golismero"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
 }
+

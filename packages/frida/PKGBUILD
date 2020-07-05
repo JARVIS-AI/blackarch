@@ -1,50 +1,56 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='frida'
-pkgver=284.79d63f5
-pkgrel=3
-pkgdesc='An interactive disassembler based on LLVM and Qt.'
-groups=('blackarch' 'blackarch-disassembler')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url='https://www.frida.xyz/'
-license=('GPL3')
-depends=('gmock' 'log4cxx' 'llvm35' 'quazip-qt5' 'guile' 'swig' 'boost'
-         'libedit')
-makedepends=('git' 'cmake' 'pkg-config')
-source=('git+https://git.siccegge.de/frida/frida.git'
-        'frida.patch')
-sha1sums=('SKIP'
-          '9114c243bdafe082e57cea294ab2dfceca9ba305')
-
-pkgver() {
-  cd "$srcdir/frida"
-
-  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
-}
+pkgbase=frida
+pkgname=('python2-frida' 'python-frida')
+_pkgname=frida
+pkgver=12.10.4
+pkgrel=1
+pkgdesc='Dynamic instrumentation toolkit for developers, reverse-engineers, and security researchers.'
+groups=('blackarch' 'blackarch-reversing' 'blackarch-binary')
+arch=('x86_64' 'aarch64')
+url='https://pypi.org/project/frida/#files'
+makedepends=('python-setuptools' 'python2-setuptools')
+license=('custom:unknown')
+source=("https://files.pythonhosted.org/packages/91/da/8a0cf544e7d9a0d87be6d7d1600560ba67ad3843225299d06be878b9d752/$pkgbase-$pkgver.tar.gz"
+        'https://raw.githubusercontent.com/frida/frida/master/COPYING')
+sha512sums=('8b23dbe20bcd9a5cb4b06af8abd2cbcade02ed33d2f3039bdaaed22bd80d7c5707d89643e343a9a37463abea58f2cdc12682e488a97a7ac94d0513d3224dfa56'
+            'e36c8d5a0538fa4bb3575a60322057f7a687aab04c13deed25399462ba0be74ce6071cc41d967e23b9a96e552462d210280427a945c6cc956919b062878efc9a')
 
 prepare() {
-  cd "$srcdir/frida"
-
-  patch -p1 -i "$srcdir/frida.patch"
+  cp -a "$pkgbase-$pkgver"{,-2}
 }
 
 build() {
-  cd "$srcdir/frida"
+  cd "$pkgbase-$pkgver-2"
 
-  cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
-    -DQUAZIP_INCLUDE_DIR=/usr/include -DQUAZIP_LIBRARIES=/usr/lib/libquazip5.so
+  python2 setup.py build
 
-  make
+  cd "$srcdir/$pkgbase-$pkgver"
+
+  python setup.py build
 }
 
-package() {
-  cd "$srcdir/frida"
+package_python2-frida() {
+  depends=('python2' 'python2-colorama' 'python2-pygments'
+           'python2-prompt_toolkit')
 
-  make DESTDIR="$pkgdir" install
+  cd "$pkgbase-$pkgver-2"
 
-  if [[ $CARCH == "x86_64" ]];
-  then
-    mv "$pkgdir/usr/lib64" "$pkgdir/usr/lib"
-  fi
+  python2 setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+
+  install -Dm 644 "$srcdir/COPYING" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
+
+package_python-frida() {
+  depends=('python' 'python-colorama' 'python-pygments' 'python-prompt_toolkit')
+
+  cd "$pkgbase-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+
+  install -Dm 644 "$srcdir/COPYING" \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
+

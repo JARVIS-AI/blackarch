@@ -1,0 +1,50 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-dateparser
+pkgname=('python2-dateparser' 'python-dateparser')
+_pkgname=dateparser
+pkgver=0.7.6
+pkgrel=1
+pkgdesc='Date parsing library designed to parse dates from HTML pages.'
+url='https://pypi.org/project/dateparser/#files'
+arch=('any')
+license=('BSD')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/86/6e/9a47cf3841bcfd1dd07a20b2aca42d4e02822ea7121aeb022869855b8d2f/$_pkgname-$pkgver.tar.gz")
+sha512sums=('802990426f6d6be69ebb8becfb875f5d90a42db8ca0e6d6c89eeb52da431f479dd81d8e9094d0d91c45d5097c18e16eddbd9e16d77b2a0319490574435d1b81a')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-dateparser() {
+  depends=('python2' 'python2-pytz' 'python2-tzlocal' 'python2-dateutil'
+           'python2-regex')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+
+package_python-dateparser() {
+  depends=('python' 'python-pytz' 'python-tzlocal' 'python-dateutil'
+           'python-regex')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-url-normalize
+_pkgname=url-normalize
+pkgver=1.4.2
+pkgrel=1
+pkgdesc='URL normalization for Python.'
+arch=('any')
+url='https://pypi.org/project/url-normalize/#files'
+license=('custom:unknown')
+depends=('python' 'python-six')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/b7/da/6909a3e11555b985b11889047705c879336aaf416f17ecb26082512238ee/$_pkgname-$pkgver.tar.gz")
+sha512sums=('288d048de54ac2afb59a4660b135261caf3384c0aa7393e83c5f6277703b3c462e810055767b28533e4703add5e9a2fa06722bcd4a8d37a8083331ff461c719b')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

@@ -1,41 +1,29 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='ipscan'
-pkgver='3.4.2'
+pkgname=ipscan
+pkgver=3.7.2
 pkgrel=1
 groups=('blackarch' 'blackarch-scanner')
-pkgdesc='Angry IP scanner is a very fast IP address and port scanner.'
-arch=('i686' 'x86_64')
+pkgdesc='A very fast IP address and port scanner.'
+arch=('x86_64')
 license=('GPL2')
-url='http://www.angryziber.com/'
+url='http://angryip.org'
 depends=('java-environment')
-if [[ $CARCH == 'x86_64' ]]; then
-  source=("https://github.com/angryziber/ipscan/releases/download/$pkgver/ipscan-linux64-${pkgver}.jar")
-  sha1sums=('662b9c7ea9633455d7a790ce2e2c48424a50928e')
-else
-  source=("https://github.com/angryziber/ipscan/releases/download/$pkgver/ipscan-linux-${pkgver}.jar")
-  sha1sums=('063bd27872c680ce1ebf89c8d95c47617010288e')
-fi
+source=("https://github.com/angryip/$pkgname/releases/download/$pkgver/$pkgname-linux64-$pkgver.jar")
+sha512sums=('5702fae38538002d45c470c132944d301bba8495a3cb2df11ef6c081619486b10f0e0249bdd9cf7b0dc5102b8550fafd7aa13a1118a5a1c75283c7f96d67f4b2')
 
 package() {
-  cd "$srcdir"
+  install -dm 755 "$pkgdir/usr/bin"
 
-  mkdir -p "$pkgdir/usr/bin"
+  install -Dm 644 "$pkgname-linux64-$pkgver.jar" \
+    "$pkgdir/usr/share/$pkgname/$pkgname-linux-$pkgver.jar"
 
-  if [[ $CARCH == 'i686' ]];
-  then
-    install -Dm644 ipscan-linux-${pkgver}.jar \
-      "$pkgdir/usr/share/ipscan/ipscan-linux-${pkgver}.jar"
-  else
-    install -Dm644 ipscan-linux64-${pkgver}.jar \
-      "$pkgdir/usr/share/ipscan/ipscan-linux-${pkgver}.jar"
-  fi
-
-  cat > "$pkgdir/usr/bin/ipscan" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-exec java -jar /usr/share/ipscan/ipscan-linux-${pkgver}.jar
+exec java -jar /usr/share/$pkgname/$pkgname-linux-$pkgver.jar
 EOF
 
-  chmod +x "$pkgdir/usr/bin/ipscan"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
 }
+

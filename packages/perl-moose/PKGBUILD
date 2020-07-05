@@ -1,12 +1,12 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='perl-moose'
+pkgname=perl-moose
 _cpanname=Moose
-pkgver='2.1806'
-pkgrel=1
+pkgver=2.2012
+pkgrel=2
 pkgdesc='A postmodern object system for Perl 5.'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 license=('PerlArtistic' 'GPL')
 options=('!emptydirs')
 depends=('perl-class-load>=0.09' 'perl-class-load-xs>=0.01'
@@ -18,12 +18,12 @@ depends=('perl-class-load>=0.09' 'perl-class-load-xs>=0.01'
          'perl-sub-exporter>=0.980' 'perl-sub-name>=0.05' 'perl-task-weaken'
          'perl-test-checkdeps' 'perl-try-tiny>=0.02')
 makedepends=('perl-dist-checkconflicts>=0.02' 'perl-test-fatal>=0.001' 'perl-test-requires>=0.05' 'perl-test-without-module')
-url="https://metacpan.org/release/$_cpanname"
-source=("http://cpan.metacpan.org/authors/id/E/ET/ETHER/${_cpanname}-${pkgver}.tar.gz")
-sha1sums=('8d9f74c28f513a02465e83db43ad13dd87b46b40')
+url='https://metacpan.org/pod/Moose'
+source=("http://cpan.metacpan.org/authors/id/E/ET/ETHER/$_cpanname-$pkgver.tar.gz")
+sha512sums=('195079c32ce0110ae5d76bc1753b9e5c9aa8b3132049912d85600b7d29470b3426e10ccac50a24acbadbb8e00b68c99a98ca975a001b12096b02f2fa1c1264f3')
 
 build() {
-  cd "$srcdir/$_cpanname-$pkgver"
+  cd "$_cpanname-$pkgver"
 
   PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
 
@@ -31,9 +31,10 @@ build() {
 }
 
 package() {
-  cd "$srcdir/$_cpanname-$pkgver"
+  cd "$_cpanname-$pkgver"
 
   make install DESTDIR="$pkgdir"
 
   find "$pkgdir" -name '.packlist' -o -name '*.pod' -delete
 }
+

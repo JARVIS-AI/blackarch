@@ -1,22 +1,22 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='scamper'
-pkgver='20141211e'
+pkgname=scamper
+pkgver=20191102b
 pkgrel=1
 pkgdesc='A tool that actively probes the Internet in order to analyze topology and performance.'
 groups=('blackarch' 'blackarch-scanner' 'blackarch-recon'
         'blackarch-networking')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+arch=('x86_64' 'aarch64')
 url='http://www.caida.org/tools/measurement/scamper/'
 license=('GPL2')
 depends=('linux-headers' 'openssl')
 makedepends=()
-source=("http://www.caida.org/tools/measurement/scamper/code/scamper-cvs-${pkgver}.tar.gz")
-sha1sums=('0343b62efef4f566099a990f95cc5bda2ba02b3c')
+source=("http://www.caida.org/tools/measurement/$pkgname/code/$pkgname-cvs-$pkgver.tar.gz")
+sha512sums=('9bcba5867ad2e25a8d8db504af6a0433b8d1fda3f314a96a5e20d457d19cc38ddb29bb24c48395fc0a8527e59d7d499ef60eef5fe5cb6d85a1fe56649ad93a7f')
 
 build() {
-  cd "$srcdir/scamper-cvs-${pkgver}"
+  cd "$pkgname-cvs-$pkgver"
 
   ./configure --prefix=/usr
 
@@ -24,9 +24,10 @@ build() {
 }
 
 package() {
-  cd "$srcdir/scamper-cvs-${pkgver}"
+  cd "$pkgname-cvs-${pkgver}"
 
   make DESTDIR="$pkgdir" install
 
-  install -Dm644 COPYING "$pkgdir/usr/share/licenses/scamper/COPYING"
+  install -Dm 644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
 }
+

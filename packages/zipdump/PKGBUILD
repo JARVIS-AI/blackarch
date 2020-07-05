@@ -1,8 +1,8 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='zipdump'
-pkgver='0.0.1'
+pkgname=zipdump
+pkgver=0.0.16
 pkgrel=1
 groups=('blackarch' 'blackarch-forensic')
 pkgdesc='ZIP dump utility.'
@@ -11,16 +11,13 @@ url='https://blog.didierstevens.com/my-software/#zipdump'
 license=('custom:unknown')
 depends=('python2')
 source=("http://didierstevens.com/files/software/zipdump_v${pkgver//./_}.zip")
-sha1sums=('70fb61ca1b2b11fecebfaefe85b489503f873d72')
+sha512sums=('71dc046907aff06e119f1fbd70d8c2d9c2e44a68185c9ca59c1da31555653d25b26ae55f553a40ec9bce97d3bf3e35dbe48a434284221cb54996ce9d9a391a93')
 
 prepare() {
-  cd "$srcdir"
-
-  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' zipdump.py
+  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' "$pkgname.py"
 }
 
 package() {
-  cd "$srcdir"
-
-  install -Dm755 zipdump.py "$pkgdir/usr/bin/zipdump"
+  install -Dm 755 "$pkgname.py" "$pkgdir/usr/bin/$pkgname"
 }
+

@@ -1,8 +1,8 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='viper'
-pkgver=1148.f9df4e2
+pkgname=viper
+pkgver=2071.a7469fa
 pkgrel=1
 groups=('blackarch' 'blackarch-disassembler' 'blackarch-binary'
         'blackarch-malware')
@@ -10,67 +10,58 @@ pkgdesc='A Binary analysis framework.'
 arch=('any')
 url='https://github.com/botherder/viper'
 license=('custom')
-depends=('python2' 'python2-magic' 'python2-pefile' 'python2-pydeep'
-         'python2-requests' 'python2-sqlalchemy' 'python2-crypto'
-         'python2-beautifulsoup4' 'python2-olefileio-pl' 'python2-prettytable'
-         'python2-pypdns' 'python2-pypssl' 'python2-pype32' 'python2-bottle'
-         'python2-pyexiftool' 'python2-pylzma' 'python2-pyelftools'
-         'python2-bitstring' 'python2-dnspython' 'python2-pyasn1'
-         'python2-pymisp' 'python2-dateutil' 'python2-requests-cache'
-         'python2-terminaltables' 'python2-pydeep' 'python2-ssdeep' 'ssdeep')
-makedepends=('git' 'python2-sphinx')
-source=('git+https://github.com/botherder/viper.git')
-install='viper.install'
-sha1sums=('SKIP')
+depends=('python' 'python-magic' 'python-pefile' 'python-pydeep'
+         'python-requests' 'python-sqlalchemy' 'python-pycryptodome'
+         'python-beautifulsoup4' 'python-olefile' 'python-prettytable'
+         'python-pypdns' 'python-pypssl' 'python-pype32' 'python-bottle'
+         'python-pyexiftool' 'python-pylzma' 'python-pyelftools'
+         'python-bitstring' 'python-dnspython' 'python-pyasn1' 'python-six'
+         'python-pymisp' 'python-dateutil' 'python-requests-cache'
+         'python-terminaltables' 'python-pydeep' 'python-ssdeep' 'ssdeep'
+         'python-oletools' 'python-django' 'python-r2pipe' 'python-pbkdf2'
+         'python-django-extensions' 'python-whitenoise' 'python-jsonschema'
+         'python-rarfile' 'python-scandir' 'python-python-magic')
+makedepends=('git' 'python-sphinx' 'python-pip')
+source=("git+https://github.com/botherder/$pkgname.git"
+        'setup.py.patch')
+sha512sums=('SKIP'
+            'e99bfa94fc89141d9ffd8ffd73ae2f62b39896da1399063204a2a712fa71800961f2e36f670102089c7d317e12946b37f16f8bf35a4cc7249121a96024a9ff5a')
 
 pkgver() {
-  cd "$srcdir/viper"
+  cd $pkgname
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
-build() {
-  cd "$srcdir/viper"
+prepare() {
+  cd $pkgname
 
-  python2 -m compileall .
-  python2 -O -m compileall .
+  #patch -p0 < "$srcdir/setup.py.patch"
+
+  git submodule init
+  git submodule update
+}
+
+build() {
+  cd $pkgname
+
+  python -m compileall .
+  python -O -m compileall .
 }
 
 package() {
-  cd "$srcdir/viper"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/viper"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  install -Dm644 README.md "$pkgdir/usr/share/doc/viper/README.md"
-  install -Dm644 requirements.txt "$pkgdir/usr/share/doc/viper/requirements.txt"
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/viper/LICENSE"
+  python setup.py install --record installed_files.txt --root="$pkgdir" -O1
 
-  rm README.md requirements.txt LICENSE
+  install -Dm 644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+  install -Dm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
-  cp -a * "$pkgdir/usr/share/viper"
+  rm README.md LICENSE
 
-  cat > "$pkgdir/usr/bin/viper-cli" << EOF
-#!/bin/sh
-cd /usr/share/viper
-exec python2 viper-cli "\$@"
-EOF
-
-  chmod +x "$pkgdir/usr/bin/viper-cli"
-
-  cat > "$pkgdir/usr/bin/viper-api" << EOF
-#!/bin/sh
-cd /usr/share/viper
-exec python2 viper-api "\$@"
-EOF
-
-  chmod +x "$pkgdir/usr/bin/viper-api"
-
-  cat > "$pkgdir/usr/bin/viper-web" << EOF
-#!/bin/sh
-cd /usr/share/viper
-exec python2 viper-web "\$@"
-EOF
-
-  chmod +x "$pkgdir/usr/bin/viper-web"
+  cp -a * "$pkgdir/usr/share/$pkgname/"
 }
+

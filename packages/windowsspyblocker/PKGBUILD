@@ -1,0 +1,19 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=windowsspyblocker
+pkgver=4.30.0
+pkgrel=1
+pkgdesc='Block spying and tracking on Windows.'
+url='https://github.com/crazy-max/WindowsSpyBlocker/'
+groups=('blackarch' 'blackarch-windows' 'blackarch-defensive')
+license=('MIT')
+arch=('any')
+source=("https://github.com/crazy-max/WindowsSpyBlocker/releases/download/$pkgver/WindowsSpyBlocker.exe")
+sha512sums=('ca14b0d23a1efb2fe2c2f399a1eae95cdfae66e1c40fac2fbb1ab3d92b74c9d7c83f7c3fb433d2528defc56f925ed41e7d93956385d923966bba7c9c8de0212c')
+
+package() {
+  install -Dm 644 WindowsSpyBlocker.exe \
+    "$pkgdir/usr/share/windows/$pkgname/WindowsSpyBlocker.exe"
+}
+

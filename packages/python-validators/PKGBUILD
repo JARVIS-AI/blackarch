@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-validators
+pkgname=('python2-validators' 'python-validators')
+_pkgname=validators
+pkgver=0.15.0
+pkgrel=1
+pkgdesc='Python Data Validation for Humans.'
+arch=('any')
+url='https://pypi.org/project/validators/#files'
+license=('BSD')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/c4/4a/4f9c892f9a9f08ee5f99c32bbd4297499099c2c5f7eff8c617a57d31a7d8/$_pkgname-$pkgver.tar.gz")
+sha512sums=('333b88621133416acf7e9c9746a92f1ae795b579ccc57fd514414ba87eb51ce8eaf496955b91c7d0c2046a52a05afb05c5452f7c1e5f035ea747c28b7d1aea73')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-validators() {
+  depends=('python2' 'python2-six' 'python2-decorator')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+
+package_python-validators() {
+  depends=('python' 'python-six' 'python-decorator')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

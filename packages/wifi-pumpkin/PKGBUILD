@@ -1,58 +1,54 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='wifi-pumpkin'
-pkgver=150.c1e90db
+pkgname=wifi-pumpkin
+pkgver=v1.0.0.R5.r26.gace5bd5
 pkgrel=1
+epoch=2
 groups=('blackarch' 'blackarch-wireless' 'blackarch-dos' 'blackarch-spoof'
         'blackarch-exploitation' 'blackarch-sniffer' 'blackarch-social')
 pkgdesc='Framework for Rogue Wi-Fi Access Point Attack.'
 arch=('any')
-url='https://github.com/P0cL4bs/WiFi-Pumpkin'
+url='https://github.com/P0cL4bs/wifipumpkin3'
 license=('MIT')
-depends=('python2' 'python2-twisted' 'scapy' 'python2-beautifulsoup4'
-         'python2-nmap' 'python2-netaddr' 'python2-dnspython' 'python2-config'
-         'python2-isc_dhcp_leases' 'python2-pyqt4' 'python2-pcapy'
-         'python2-lxml' 'ipython2' 'hostapd' 'rfkill' 'php-cgi' 'dhcp'
-         'python2-pyopenssl' 'python2-pygtail' 'python2-configparser'
-         'python2-netifaces' 'sslstrip' 'driftnet' 'python2-hyperframe'
-         'python2-pefile' 'python2-h2' 'capstone' 'python2-capstone')
+depends=('python' 'python-netifaces' 'python-netaddr' 'python-dhcplib'
+         'python-tabulate' 'python-beautifultable' 'python-urwid'
+         'python-termcolor' 'python-twisted' 'python-pyqt5' 'python-pyqt5-sip'
+         'python-pyopenssl' 'python-asn1crypto' 'python-beautifulsoup4'
+         'python-bs4' 'python-dnslib' 'python-loguru' 'python-isc_dhcp_leases'
+         'python-dnspython' 'python-flask' 'python-coverage' 'python-scapy'
+         'python-scapy-http' 'python-lxml' 'dhcp' 'networkmanager' 'responder')
 makedepends=('git')
-source=('git+https://github.com/P0cL4bs/WiFi-Pumpkin.git')
-sha1sums=('SKIP')
+source=("$pkgname::git+https://github.com/P0cL4bs/wifipumpkin3.git"
+        'requirements.txt.patch')
+sha512sums=('SKIP'
+            '0b40cb12fc79e477b5e66231909a466fe28393fd7feab8d2d5270d8b108519778dcca907085eb86a7a1d8f61da3d74884d8da01d201df27366b71d244d1c8729')
 
 pkgver() {
-  cd "$srcdir/WiFi-Pumpkin"
+  cd $pkgname
 
-  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+  git describe --long --tags | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
-  cd "$srcdir/WiFi-Pumpkin"
+  patch -p1 < requirements.txt.patch
+}
 
-  find . -type f -exec \
-    sed -i 's|/usr/share/WiFi-Pumpkin/|/usr/share/wifi-pumpkin/|g' {} \;
+build() {
+  cd $pkgname
+
+  python setup.py build
 }
 
 package() {
-  cd "$srcdir/WiFi-Pumpkin"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/wifi-pumpkin"
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
 
-  install -Dm644 -t "$pkgdir/usr/share/doc/wifi-pumpkin/" README.md CHANGELOG \
-    CONTRIBUTING.md
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/wifi-pumpkin/LICENSE"
+  mv "$pkgdir/usr/bin/wifipumpkin3" "$pkgdir/usr/bin/$pkgname"
 
-  rm README.md CONTRIBUTING.md CHANGELOG LICENSE
-
-  cp -a * "$pkgdir/usr/share/wifi-pumpkin"
-
-  cat > "$pkgdir/usr/bin/wifi-pumpkin" << EOF
-#!/bin/sh
-cd /usr/share/wifi-pumpkin
-exec python2 wifi-pumpkin.py "\${@}"
-EOF
-
-  chmod a+x "$pkgdir/usr/bin/wifi-pumpkin"
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" *.md
+  rm "$pkgdir/usr/share/doc/$pkgname/LICENSE.md"
+  install -Dm 644 LICENSE.md "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
+

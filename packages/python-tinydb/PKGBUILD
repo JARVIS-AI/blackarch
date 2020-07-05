@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-tinydb
+pkgname=('python2-tinydb' 'python-tinydb')
+_pkgname=tinydb
+pkgver=4.1.1
+pkgrel=1
+pkgdesc='Lightweight document oriented database optimized for your happiness.'
+arch=('any')
+url='https://pypi.org/project/tinydb/#files'
+license=('MIT')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/bf/4c/028a78ace7970b56f98fdee1760d9da7f3c823d5d6ece5189e577708f290/$_pkgname-$pkgver.tar.gz")
+sha512sums=('db227f7fe7416780453657c8f095f4a9e568f07c664732d13dafb60dffdfe4360b6d907bbfcb59dd7a5bfaf7242362bcdd442d836685e90e518dd54c667aa09b')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-tinydb() {
+  depends=('python2' 'python2-pytest-cov' 'python2-yaml')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+
+package_python-tinydb() {
+  depends=('python' 'python-pytest-cov' 'python-yaml')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+}
+

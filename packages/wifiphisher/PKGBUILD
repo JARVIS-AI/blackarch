@@ -1,40 +1,52 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='wifiphisher'
-pkgver=303.367d1a0
+pkgname=wifiphisher
+pkgver=787.f0be783
 pkgrel=1
+epoch=1
 groups=('blackarch' 'blackarch-wireless' 'blackarch-social')
 pkgdesc='Fast automated phishing attacks against WPA networks.'
 arch=('any')
-url='https://github.com/sophron/wifiphisher'
+url='https://github.com/wifiphisher/wifiphisher'
 license=('MIT')
-depends=('python2' 'python2-httplib2' 'scapy' 'aircrack-ng' 'python2-pyopenssl'
-         'python2-pyric' 'hostapd' 'dnsmasq')
-makedepends=('git' 'python2-setuptools')
-source=('git+https://github.com/sophron/wifiphisher.git')
-sha1sums=('SKIP')
+depends=('python' 'python-httplib2' 'python-scapy' 'aircrack-ng'
+         'python-pyopenssl' 'python-pyric' 'python-blessings' 'python-pbkdf2'
+         'python-tornado' 'hostapd' 'dnsmasq' 'python-dbus' 'roguehostapd')
+makedepends=('git' 'python-setuptools')
+source=("$pkgname::git+https://github.com/$pkgname/$pkgname.git")
+sha512sums=('SKIP')
 
 pkgver() {
-  cd "$srcdir/wifiphisher"
+  cd $pkgname
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
-build() {
-  cd "$srcdir/wifiphisher"
+prepare() {
+  cd $pkgname
 
-  python2 setup.py build
+  sed -i 's|tornado==4.5.3|tornado|' setup.py
+}
+
+build() {
+  cd $pkgname
+
+  python setup.py build
 }
 
 package() {
-  cd "$srcdir/wifiphisher"
+  cd $pkgname
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/wifiphisher"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  python2 setup.py install --root="$pkgdir"
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
 
-  install -Dm644 README.md "$pkgdir/usr/share/doc/wifiphisher/README.md"
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/wifiphisher"
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" *.md
+  install -Dm 644 LICENSE.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+
+  # moron
+  sed -i '1 i\# -*- coding: utf-8 -*-' \
+    "$pkgdir/usr/lib/python3.8/site-packages/$pkgname/common/phishingpage.py"
 }
+

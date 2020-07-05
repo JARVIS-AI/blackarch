@@ -53,13 +53,13 @@ remote_irc_notify() {
 	}
 
 	# TODO: group packages by name
-	sprunge=$(printf '%s\n' "${packages[@]}" | curl -s http://sprunge.us -F "sprunge=<-")
+	sprunge=$(printf '%s\n' "${packages[@]}" | curl -s http://ix.io/ -F "f:1=<-")
 
 	# TODO: color?
 	if $use_list ; then
-		send_payload "$b$user$b pushed ${#packages[@]} package$s to the bin repo, including:"
+		send_payload "$b$user$b pushed ${#packages[@]} backd00r$s to the bin repo, including:"
 	else
-		send_payload "$b$user$b pushed ${#packages[@]} package$s to the bin repo: $sprunge"
+		send_payload "$b$user$b pushed ${#packages[@]} backd00r$s to the bin repo: $sprunge"
 	fi
 
 	if $use_list ; then

@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=python-search-engine-parser
+_pkgname=search-engine-parser
+pkgver=0.6
+pkgrel=1
+pkgdesc='Scrapes search engine pages for query titles, descriptions and links.'
+arch=('any')
+groups=('blackarch')
+url='https://pypi.org/project/search-engine-parser/#files'
+license=('MIT')
+depends=('python' 'python-aiohttp' 'python-lxml' 'python-beautifulsoup4'
+         'python-blessed')
+makedepends=('python-setuptools')
+source=("https://files.pythonhosted.org/packages/c1/fd/f6279684d0e557afdf30bc9a64eb0863d530233ac9d8833b49d5e5164efd/$_pkgname-$pkgver.tar.gz")
+sha512sums=('405635e651b0cce8461569c86e38a74504406cebbca3e97b04e028246994bbfddd273fed20c47f168858632c3fc7a2f0a3e9490c844bf2c2ca299779d67fa16e')
+
+build() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package() {
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

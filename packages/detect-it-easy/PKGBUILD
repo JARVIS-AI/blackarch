@@ -1,41 +1,35 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='detect-it-easy'
-pkgver=50.6ae37ad
+pkgname=detect-it-easy
+pkgver=2.05
 pkgrel=1
+epoch=1
 groups=('blackarch' 'blackarch-binary' 'blackarch-reversing')
 pkgdesc='A program for determining types of files.'
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url='https://github.com/horsicq/Detect-It-Easy'
-license=('unknown')
-depends=('qt4')
-makedepends=('git' 'qt4')
-source=('git+https://github.com/horsicq/DIE-engine.git')
-sha1sums=('SKIP')
-
-pkgver() {
-  cd "$srcdir/DIE-engine"
-
-  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
-}
-
-prepare() {
-  cd "$srcdir/DIE-engine"
-
-  sed -i 's|/home/hors/QT/4.8.6/bin/qmake|/usr/bin/qmake-qt4|' \
-    build_console_lin.sh
-}
-
-build() {
-  cd "$srcdir/DIE-engine"
-
-  bash build_console_lin.sh
-}
+arch=('x86_64')
+url='https://github.com/horsicq/DIE-engine/releases'
+license=('MIT')
+source=("https://github.com/horsicq/DIE-engine/releases/download/$pkgver/die_lin64_portable_$pkgver.tar.gz")
+sha512sums=('57c8ace90585a9fcc762f011e8694ef82a2de30c6196c713fd464d26e422548b8330134f1506f229dfc602cd296f4812cd0bcab180771846a9b09ff2cd83347e')
 
 package() {
-  cd "$srcdir/DIE-engine"
+  cd die_lin64_portable
 
-  install -Dm755 DIEC_lin64 "$pkgdir/usr/bin/detect-it-easy"
-  install -Dm644 README.md "$pkgdir/usr/share/doc/detect-it-easy/README"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
+
+  cp -a --no-preserve=ownership * "$pkgdir/usr/share/$pkgname/"
+
+  _tools="diec diel die"
+
+  for tool in $_tools ; do
+    cat > "$pkgdir/usr/bin/$tool" << EOF
+#!/bin/sh
+cd /usr/share/$pkgname/
+exec ./$tool.sh "\$@"
+EOF
+    chmod 755 "$pkgdir/usr/bin/$tool"
+  done
 }
+

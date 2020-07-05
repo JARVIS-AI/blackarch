@@ -1,25 +1,32 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='python2-ptrace'
-pkgver='0.9.1'
+pkgname=python2-ptrace
+_pkgname=python-ptrace
+pkgver=1.0.1
 pkgrel=1
-pkgdesc='A Python binding of ptrace library.'
-url="https://pypi.python.org/pypi/python-ptrace"
+pkgdesc='Python binding of ptrace.'
+url='https://pypi.org/project/python-ptrace/#files'
 arch=('any')
 license=('GPL2')
-depends=('python2')
-source=("https://pypi.python.org/packages/f0/72/6b4ddca3e38f1187ed406a6f5b88c1900e0bfbfdfe30b087576a32bb7d92/python-ptrace-${pkgver}.tar.gz")
-sha1sums=('ee8b08206289bc9a5a8899c9b0969d096ff8ed59')
+depends=('python2' 'python2-six')
+makedepends=('python2-setuptools')
+source=("https://files.pythonhosted.org/packages/44/5c/3533920a22db5ebebeb33593b83597446735ea434f48cb25aa6888375e6f/$_pkgname-$pkgver.tar.gz")
+sha512sums=('d33a75042bf2c4fd873211be9fa43ac2abc15c706664ed2b74f250a33f591d7998064d90de2b7d83fb57c69c9465a0a543ca35212fcb8295595560533e3ad962')
 
 build() {
-  cd "$srcdir/python-ptrace-$pkgver"
+  cd "$_pkgname-$pkgver"
 
   python2 setup.py build
 }
 
-package(){
-  cd "$srcdir/python-ptrace-$pkgver"
+package() {
+  cd "$_pkgname-$pkgver"
 
-  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1
+  python2 setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+
+  for i in "$pkgdir/usr/bin/"*; do
+    mv $i "${i}2"
+  done
 }
+

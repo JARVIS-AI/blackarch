@@ -1,0 +1,60 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-cx_oracle
+pkgname=('python2-cx_oracle' 'python-cx_oracle')
+_pkgname=cx_Oracle
+pkgver=8.0.0
+pkgrel=1
+pkgdesc='Python interface to Oracle.'
+arch=('x86_64' 'aarch64')
+url='https://pypi.org/project/cx_Oracle/#files'
+license=('BSD')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/3b/87/8597bdc7fa965c8d984fb9ea7456004eba0131453de335fb65c01f5ce50e/cx_Oracle-$pkgver.tar.gz")
+sha512sums=('81f151f60c81c86621a7dd5c1eb5931f6b03013a9ebeb851adfa40f51bf3a1ee3f3c1fc29e41cdb185bb830dbbaf556eb110fd31bcfef92f1052fd6438571baf')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-cx_oracle() {
+  depends=('python2')
+
+  install -dm 755 "$pkgdir/usr/share/"{doc,"licenses/${pkgname[0]}"}
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+
+  mv "$pkgdir/usr/$_pkgname-doc" "$pkgdir/usr/share/doc/${pkgname[0]}/"
+  mv "$pkgdir/usr/share/doc/${pkgname[0]}/LICENSE.txt" \
+    "$pkgdir/usr/share/licenses/${pkgname[0]}/LICENSE"
+}
+
+package_python-cx_oracle() {
+  depends=('python')
+
+  install -dm 755 "$pkgdir/usr/share/"{doc,"licenses/${pkgname[1]}"}
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --prefix=/usr --root="$pkgdir" --optimize=1 \
+    --skip-build
+
+  mv "$pkgdir/usr/$_pkgname-doc" "$pkgdir/usr/share/doc/${pkgname[1]}/"
+  mv "$pkgdir/usr/share/doc/${pkgname[1]}/LICENSE.txt" \
+    "$pkgdir/usr/share/licenses/${pkgname[1]}/LICENSE"
+}
+

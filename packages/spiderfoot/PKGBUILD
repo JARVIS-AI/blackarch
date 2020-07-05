@@ -1,39 +1,58 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='spiderfoot'
-pkgver='2.7.0'
-pkgrel=2
+pkgname=spiderfoot
+pkgver=3.0
+pkgrel=1
 groups=('blackarch' 'blackarch-recon')
 pkgdesc='The Open Source Footprinting Tool.'
-url='http://spiderfoot.net/'
+url='https://github.com/smicallef/spiderfoot'
 arch=('any')
 license=('GPL2')
-depends=('python2' 'python2-mako' 'python2-cherrypy' 'python2-m2crypto'
-         'python2-lxml' 'python2-netaddr' 'python2-m2crypto' 'python2-cherrypy'
-         'python2-mako' 'swig')
-source=("http://downloads.sourceforge.net/project/spiderfoot/spiderfoot-${pkgver}-src.tar.gz")
-sha1sums=('680a7f72ac5e2e629ad7554b17ceddbc43535edb')
+depends=('python' 'python-adblockparser' 'python-dnspython' 'python-exifread'
+         'python-cherrypy' 'python-mako' 'python-beautifulsoup4' 'python-lxml'
+         'python-netaddr' 'python-pysocks' 'python-requests' 'python-ipwhois'
+         'python-ipaddr' 'python-phonenumbers' 'python-pygexf' 'python-pypdf2'
+         'python-stem' 'python-python-whois' 'python-future' 'python-secure'
+         'python-pyopenssl' 'python-python-docx' 'python-python-pptx'
+         'python-networkx' 'python-cryptography')
+source=("https://github.com/smicallef/$pkgname/archive/v$pkgver.tar.gz")
+sha512sums=('abf64b6b819f8535f87237649be677af27aaddc729897eff8d4c27bd441e32862a42f8b84cf61ad3a0b9e1fc940fddf9d2e47d7decfcb62812239c5a9e01850a')
+
+prepare() {
+  cd "$pkgname-$pkgver"
+
+  #sed -i 's|treebuilders._base|treebuilders.base|g' ext/bs4/builder/_html5lib.py
+}
 
 package() {
-  cd "$srcdir/spiderfoot-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/spiderfoot"
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgname"
 
-  install -Dm644 -t "$pkgdir/usr/share/doc/spiderfoot/" README.md THANKYOU \
+  install -Dm 644 -t "$pkgdir/usr/share/doc/$pkgname/" README.md THANKYOU \
     VERSION
-  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/spiderfoot/LICENSE"
+  install -Dm 644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
   rm README.md LICENSE THANKYOU VERSION
 
-  cp -a * "$pkgdir/usr/share/spiderfoot"
+  cp -a * "$pkgdir/usr/share/$pkgname/"
 
-cat > "$pkgdir/usr/bin/spiderfoot" << EOF
+  cat > "$pkgdir/usr/bin/$pkgname" << EOF
 #!/bin/sh
-cd /usr/share/spiderfoot/
-exec python2 sf.py "\${@}"
+cd /usr/share/$pkgname
+exec python sf.py "\$@"
 EOF
 
-  chmod +x "$pkgdir/usr/bin/spiderfoot"
+  chmod +x "$pkgdir/usr/bin/$pkgname"
+
+  cat > "$pkgdir/usr/bin/$pkgname-cli" << EOF
+#!/bin/sh
+cd /usr/share/$pkgname
+exec python sfcli.py "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/$pkgname-cli"
 }
+

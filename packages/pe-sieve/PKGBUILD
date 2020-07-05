@@ -1,0 +1,21 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgname=pe-sieve
+pkgver=0.2.6
+pkgrel=1
+pkgdesc='Scans a given process. Recognizes and dumps a variety of potentially malicious implants (replaced/injected PEs, shellcodes, hooks, in-memory patches).'
+url='https://github.com/hasherezade/pe-sieve'
+groups=('blackarch' 'blackarch-windows' 'blackarch-malware'
+        'blackarch-binary')
+license=('BSD')
+arch=('any')
+source=("https://github.com/hasherezade/$pkgname/releases/download/v$pkgver/${pkgname}64.exe"
+        "https://github.com/hasherezade/$pkgname/releases/download/v$pkgver/${pkgname}32.exe")
+sha512sums=('c30c5d4e6b34c90ff4419d9327fdebadb1f9ad36bca9a587de0e83e926d6f23d42a24b33928f14166be423b8fd62e1c108d1c5a91d3b0b52c06edcece1603e9c'
+            '28c1e61fff11abe2fd23bcd1ddae773103b423539caa6a5000c5e04f50e243adf1eb077734221c8d4df93736c1ab85bd2508fbfb7925fc02f1de6cf141c95faa')
+
+package() {
+  install -Dm 644 -t "$pkgdir/usr/share/windows/$pkgname/" *
+}
+

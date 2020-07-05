@@ -1,41 +1,74 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='api-dnsdumpster'
-pkgver=31.dbee76f
-pkgrel=1
+pkgbase=api-dnsdumpster
+pkgname=('python2-api-dnsdumpster' 'python-api-dnsdumpster')
+pkgver=59.eda15d6
+pkgrel=5
 groups=('blackarch' 'blackarch-recon' 'blackarch-scanner')
 pkgdesc='Unofficial Python API for http://dnsdumpster.com/.'
 arch=('any')
 url='https://github.com/PaulSec/API-dnsdumpster.com'
 license=('custom:unknown')
-depends=('python2-beautifulsoup4')
-makedepends=('git')
-source=('git+https://github.com/PaulSec/API-dnsdumpster.com.git')
-sha1sums=('SKIP')
+makedepends=('git' 'python2-setuptools' 'python-setuptools')
+source=("$pkgbase::git+https://github.com/PaulSec/API-dnsdumpster.com.git")
+sha512sums=('SKIP')
 
 pkgver() {
-  cd "$srcdir/API-dnsdumpster.com"
+  cd $pkgbase
 
   echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
 }
 
-package() {
-  cd "$srcdir/API-dnsdumpster.com"
+prepare() {
+  cp -a "$pkgbase"{,-2}
+}
 
-  mkdir -p "$pkgdir/usr/bin"
-  mkdir -p "$pkgdir/usr/share/api-dnsdumpster"
+build() {
+  cd "$pkgbase-2"
 
-  install -Dm644 -t "$pkgdir/usr/share/api-dnsdumpster/" README.md
+  python2 setup.py build
+
+  cd "$srcdir/$pkgbase"
+
+  python setup.py build
+}
+
+package_python2-api-dnsdumpster() {
+  depends=('python' 'python-beautifulsoup4' 'python-requests')
+
+  cd "$pkgbase-2"
+
+  python2 setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+
+  install -Dm 644 -t "$pkgdir/usr/share/${pkgname[0]}/" README.md
+
+  find "$pkgdir" -type f -iname '*.pyc' -exec rm {} \;
+}
+
+package_python-api-dnsdumpster() {
+  depends=('python' 'python-beautifulsoup4' 'python-requests')
+
+  cd $pkgbase
+
+  install -dm 755 "$pkgdir/usr/bin"
+  install -dm 755 "$pkgdir/usr/share/$pkgbase"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+
+  install -Dm 644 -t "$pkgdir/usr/share/${pkgname[1]}/" README.md
 
   rm README.md
 
-  cp -a * "$pkgdir/usr/share/api-dnsdumpster"
+  cp -a dnsdumpster/* "$pkgdir/usr/share/$pkgbase/"
 
-  cat > "$pkgdir/usr/bin/api-dnsdumpster" << EOF
+  cat > "$pkgdir/usr/bin/$pkgbase" << EOF
 #!/bin/sh
-exec python2 /usr/share/api-dnsdumpster/API_example.py "\$@"
+exec python /usr/share/$pkgbase/API_example.py "\$@"
 EOF
 
-  chmod a+x "$pkgdir/usr/bin/api-dnsdumpster"
+  chmod +x "$pkgdir/usr/bin/$pkgbase"
+
+  find "$pkgdir" -type f -iname '*.pyc' -exec rm {} \;
 }
+

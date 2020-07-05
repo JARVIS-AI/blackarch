@@ -1,43 +1,55 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
 # See COPYING for license details.
 
-pkgname='pwntools'
-pkgver='3.2.0'
+pkgname=pwntools
+pkgver=4.1.3
 pkgrel=1
 pkgdesc='CTF framework and exploit development library.'
 arch=('any')
 url='https://github.com/Gallopsled/pwntools'
 license=('MIT' 'GPL2' 'BSD')
 groups=('blackarch' 'blackarch-disassembler' 'blackarch-reversing')
-depends=('python2' 'python2-paramiko' 'python2-mako' 'python2-pyelftools'
-         'python2-capstone' 'python2-pyserial' 'python2-requests'
-         'python2-pip' 'python2-tox' 'python2-pygments' 'python2-socks'
-         'python2-dateutil' 'python2-psutil' 'ropgadget')
-makedepends=('python2-setuptools')
-source=("https://github.com/Gallopsled/pwntools/archive/${pkgver}.tar.gz")
-sha1sums=('14302a2cf36dc88f27fa9cd49c5579439f04f07f')
+depends=('python' 'python-paramiko' 'python-mako' 'python-pyelftools'
+         'python-capstone' 'python-pyserial' 'python-requests' 'python-isort'
+         'python-pip' 'python-tox' 'python-pygments' 'python-pysocks'
+         'python-dateutil' 'python-psutil' 'python-pypandoc' 'python-sphinx'
+         'python-intervaltree' 'ropgadget' 'python-packaging'
+         'python-sortedcontainers' 'python-doc2dash' 'python-coveralls'
+         'python-unicorn')
+makedepends=('python-setuptools')
+source=("https://github.com/Gallopsled/pwntools/archive/$pkgver.tar.gz"
+        'setup.py.patch')
+sha512sums=('dd0d883990f3eca586a161834f9503e1ed18ab828946f7d9053667cc42f44be20e20bc10e2470bdd0de7eca115445853d81241daad0b7b84f9f2c2cb6900fafc'
+            'bdaa75fb4d4c389206b9a620fde88edbebe6950fefea5f0cb37aa1fa653e4a2962eceb003b252bb9a7c0a4715870ceabc15060b0499867601b84a62e0ef97f89')
 
 prepare() {
-  cd "$srcdir/pwntools-$pkgver"
+  patch -p1 < setup.py.patch
 
-  sed -i 's|python|python2|' pwnlib/elf/datatypes.py
+  cd "$pkgname-$pkgver"
+
+  sed -i 's|python2|python|' pwnlib/elf/datatypes.py
 }
 
 build() {
-  cd "$srcdir/pwntools-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  python2 setup.py build
+  python setup.py build
 }
 
 package() {
-  cd "$srcdir/pwntools-$pkgver"
+  cd "$pkgname-$pkgver"
 
-  install -Dm644 LICENSE-pwntools.txt \
-    "$pkgdir/usr/share/licenses/$pkgname/LICENSE-pwntools.txt"
+  _tools="asm common constgrep checksec cyclic disasm errno elfdiff elfpatch"
+  _tools="$_tools debug disablenx hex main phd pwn pwnstrip scramble shellcraft"
+  _tools="$_tools unhex update template"
 
-  python2 setup.py install --root="$pkgdir" --optimize=1
+  install -Dm 644 LICENSE-pwntools.txt \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 
-  mv "$pkgdir/usr/bin/asm" "$pkgdir/usr/bin/pwntools-asm"
-  mv "$pkgdir/usr/bin/disasm" "$pkgdir/usr/bin/pwntools-disasm"
-  mv "$pkgdir/usr/bin/checksec" "$pkgdir/usr/bin/pwntools-checksec"
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1
+
+  for t in $_tools; do
+    mv "$pkgdir/usr/bin/$t" "$pkgdir/usr/bin/$pkgname-$t"
+  done
 }
+

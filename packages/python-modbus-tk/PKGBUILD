@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( https://www.blackarch.org/ ).
+# See COPYING for license details.
+
+pkgbase=python-modbus-tk
+pkgname=('python2-modbus-tk' 'python-modbus-tk')
+_pkgname=modbus_tk
+pkgver=1.1.1
+pkgrel=1
+epoch=1
+pkgdesc='Implementation of modbus protocol in Python.'
+url='https://pypi.org/project/modbus_tk/#files'
+license=('LGPL')
+arch=('any')
+provides=('modbus-tk' 'python2-modbus-tk' 'python-modbus-tk')
+makedepends=('python2-setuptools' 'python-setuptools')
+source=("https://files.pythonhosted.org/packages/63/2e/991c8965fd45db4c38fefe1fa70356825e847e1bbb1f14e127aa2b4d37aa/modbus_tk-$pkgver.tar.gz")
+sha512sums=('1d0ab733ba6e7d8ddd3607df7a1d3e2741a11d045b3a5fc0d292d238457c1736a1508ea5f3d93b1ca5728a583a5821c9f7cae7e9919ed6ad4fd437ed03ec135f')
+
+prepare() {
+  cp -a "$_pkgname-$pkgver"{,-2}
+}
+
+build() {
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py build
+
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  python setup.py build
+}
+
+package_python2-modbus-tk() {
+  depends=('python2' 'python2-pyserial')
+
+  cd "$_pkgname-$pkgver-2"
+
+  python2 setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+
+package_python-modbus-tk() {
+  depends=('python' 'python-pyserial')
+
+  cd "$_pkgname-$pkgver"
+
+  python setup.py install --root="$pkgdir" --prefix=/usr -O1 --skip-build
+}
+

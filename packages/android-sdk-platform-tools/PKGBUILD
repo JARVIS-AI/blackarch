@@ -1,44 +1,39 @@
-# This file is part of BlackArch Linux ( http://blackarch.org ).
-# See COPYING for license details.
+# Maintainer: Zhang Hai <dreaming.in.code.zh@gmail.com>
+# Contributor: Felix Golatofski <contact@xdfr.de>
+# Contributor: Vlad M. <vlad@archlinux.net>
+# Contributor: Gordin <9ordin @t gmail dot com>
+# Contributor: Christoph Bayer <chrbayer@criby.de>
 
-pkgname='android-sdk-platform-tools'
-pkgver='r23.0.1'
+pkgname=android-sdk-platform-tools
+pkgver=r30.0.3
 pkgrel=1
-pkgdesc='Platform-Tools for Google Android SDK (adb and fastboot).'
-groups=('blackarch' 'blackarch-mobile')
-arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url='http://developer.android.com/sdk/index.html'
+pkgdesc='Platform-Tools for Google Android SDK (adb and fastboot)'
+arch=('x86_64')
+url='https://developer.android.com/sdk/index.html'
 license=('custom')
-depends=('gcc-libs' 'zlib' 'ncurses')
-if [[ $CARCH = x86_64 ]]; then
-  depends=('lib32-gcc-libs' 'lib32-zlib' 'lib32-ncurses')
-fi
-source=("http://dl-ssl.google.com/android/repository/platform-tools_${pkgver}-linux.zip"
-        "adb.service"
-        "license.html")
-sha256sums=('e19280af36e4753d9d4f0c6f6bdab63f36a0a025742d42cd86adb88d71fc236b'
-            '1c219abea7584ae13f3f76b04e269ef21c1699d6bd29b7615523f927a9d10deb'
-            'a7f3a259290ae6a5dc61bd34ecae36e2b7e2f644865ddc3c7fde5d248b8a7cef')
+depends=('zlib' 'ncurses')
+provides=('adb' 'android-tools')
+conflicts=('adb')
+replaces=('android-tools')
+install="$pkgname.install"
+source=("https://dl.google.com/android/repository/platform-tools_$pkgver-linux.zip"
+        'adb.service'
+        'license.html')
+sha512sums=('ff8ffe918d00fb75c7f0988faf3c74255a2dfbc02dfe29cc28d19b85128c3feec2d29773471b12e44a255316b381be9d511f85c3dded10aeb58b682d8aa14fa1'
+            'faf315d2bb7a9caa099db32e21451a1fd8fcc76475f25b36742356adc4f758e6fc7512106f9539b2db687c9566ef5889a4fa051c3c1a84555090d4b175e485d4'
+            '23f1533682c39e2ae2ae40083de343abcd6ed0a523eacdac58768067f8f450b1cec30073993dd7b972a5b8125136ed29a043ae894dff046fd75bb04c4d21a0f4')
 
 package() {
-  cd "$srcdir"
+  install -dm 755 "$pkgdir/etc/profile.d"
+  install -dm 755 "$pkgdir/opt/android-sdk/"
+  
+  install -Dm 644 "$srcdir/adb.service" "$pkgdir/usr/lib/systemd/system/adb.service"
+  install -Dm 644 "$srcdir/license.html" "$pkgdir/usr/share/licenses/$pkgname/license.html"
 
-  install -Dm644 "$srcdir/adb.service" \
-    "$pkgdir/usr/lib/systemd/system/adb.service"
-  install -Dm644 "$srcdir/license.html" \
-    usr/share/licenses/android-sdk-platform-tools/license.html
-
-  cd "$pkgdir"
-  mkdir -p opt etc/profile.d
-  echo 'export PATH=$PATH:/opt/android-sdk/platform-tools' \
-    > etc/profile.d/android-sdk-platform-tools.sh
-  echo 'setenv PATH ${PATH}:/opt/android-sdk/platform-tools' \
-    > etc/profile.d/android-sdk-platform-tools.csh
-  chmod 755 etc/profile.d/android-sdk-platform-tools.{csh,sh}
-  mkdir -p opt/android-sdk
+  echo 'export PATH="$PATH:/opt/android-sdk/platform-tools"' >"$pkgdir/etc/profile.d/$pkgname.sh"
+  echo 'setenv PATH "$PATH:/opt/android-sdk/platform-tools"' >"$pkgdir/etc/profile.d/$pkgname.csh"
+  chmod 755 "$pkgdir/etc/profile.d/$pkgname"{.csh,sh}
   cp -a "$srcdir/platform-tools" "$pkgdir/opt/android-sdk/platform-tools"
-
-  # Fix permissions
-  chmod -R ugo+rX "${pkgdir}/opt"
-  chmod g+rwX "${pkgdir}/opt/android-sdk/platform-tools"
+  chmod -R +rX "$pkgdir/opt/android-sdk/platform-tools"
 }
+
